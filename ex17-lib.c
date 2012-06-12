@@ -177,6 +177,27 @@ int Database_loaddb(Connection * conn)
 */
 int Database_writebyidx(Connection * conn, const int idx)
 {
+  assert(conn);
+  assert(conn->db);
+
+  if (conn->mode != 'w') 
+    return 1;
+
+  if (idx < 0 || idx >= MAXRECORDS)
+    return 1;
+
+  assert(conn->db->records[idx].set);
+  assert(conn->db->records[idx].name);
+  assert(conn->db->records[idx].email);
+
+  if (!fseeko(conn->db_file, 
+	      (idx*sizeof(Address) - ftell(conn->db_file)),
+	      SEEK_CUR))
+    return 1;
+
+  if (!(fwrite(&conn->db->records[idx], sizeof(Address), 1, conn->db_file)))
+    return 1;;
+
   return 0;
 }
 
@@ -230,7 +251,7 @@ int Database_set(Connection * conn, const Address * record)
 /*
   return NULL, if Address not found/error
 */
-const Address * Database_getbyidx(Connection * conn, const int idx)
+Address * Database_getbyidx(Connection * conn, const int idx)
 {
   assert(conn);
 
