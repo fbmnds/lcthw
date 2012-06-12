@@ -1,0 +1,4 @@
+*.dSYM
+test.db
+gmon.out
+.DS_Store

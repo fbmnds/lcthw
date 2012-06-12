@@ -8,7 +8,9 @@
 void Database_run(void)
 {
   Connection * conn;
-  Address * record;
+  Address * record = malloc(sizeof(Address));
+
+  if (!record) die("ERROR: address alloc failed");
 
   if(fopen(TESTDB, "r")) 
     conn = Connection_open(TESTDB, 'w');
@@ -41,7 +43,10 @@ void Database_run(void)
   if (Database_set(conn, record)) die("ERROR: database set() record");
 
   Database_list(conn);
-
+  
+  /* avoid memory leak */
+  free(record);
+  /* reuse record */
   record = Database_getbyidx(conn, 1);
 
   if (Database_set(conn, record)) die("ERROR: database set() record");
@@ -55,6 +60,8 @@ void Database_run(void)
   Database_list(conn);
 
   Connection_close(conn);
-  
+  /* leaves record as dangling pointer, hence reset it */
+  record = NULL;
+
   return;
 }
