@@ -121,7 +121,7 @@ int Database_set(Connection * conn, const Address * record);
 /*
   return NULL, if Address not found/error
 */
-const Address * Database_getbyidx(Connection * conn, const int idx);
+Address * Database_getbyidx(Connection * conn, const int idx);
 
 
 /*
