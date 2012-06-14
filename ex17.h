@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include "dbg.h"
+
+#define cfree(p) { free((p)); (p) = NULL; }
 
 #define MAXDATA    20
 #define MAXRECORDS 200 
@@ -29,7 +32,7 @@ typedef struct Connection {
   int mode;                  /* modes for Connection_open() */
 } Connection;
 
-void die (const char * message);
+// void die (const char * message);
 
 /*
   copy source to target 
@@ -71,8 +74,9 @@ int Database_createdb(Connection * conn);
 
 /*
   flush database to db_file
+  return 0/1, if OK/failure
 */
-void Database_flushdb(Connection * conn);
+int Database_flushdb(Connection * conn);
 
 /*
   delete db file, if connection is valid and mode permits
@@ -87,7 +91,6 @@ int Database_deletedb(Connection * conn);
 
 /*
   load database from file
-  die, if error/failure
   return 0, if OK
 */
 int Database_loaddb(Connection * conn);
@@ -125,9 +128,9 @@ Address * Database_getbyidx(Connection * conn, const int idx);
 
 
 /*
-  return 0/1, if OK/failure
+  dump database to stdout
 */
-int Database_list(Connection * conn);
+void Database_list(Connection * conn);
 
 /*
   mode 'c': create & init local database file; die, if file exists

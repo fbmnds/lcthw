@@ -1,4 +1,4 @@
-CFLAGS=-Wall -g3 -pedantic -std=c99
+CFLAGS=-Wall -g -std=c99 
 CC=llvm-gcc
 
 #all: clean ex1 ex3 ex7 ex8 ex10 ex11 ex13 ex15 ex16 ex17
