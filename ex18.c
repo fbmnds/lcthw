@@ -18,11 +18,11 @@ int oddeven_order(const int a, const int b)
 int * bubble_sort(int * source, const int count, compare_cb cmp)
 {
   int i, j;
-  int * sorted = malloc(sizeof(source));
+  int * sorted = malloc(count*sizeof(int));
   int tmp;
 
   check_mem(sorted);
-  memcpy(sorted, source, count*sizeof(int));
+  memcpy(sorted, source, count*sizeof(int));         /* trust count */
 
   for(i = 0; i < count; i++) 
     for(j = 0; j < count - 1; j++) 
@@ -49,7 +49,7 @@ int test_sorting(int * source, const int count)
 {
   int * sorted;
 
-  sorted = bubble_sort(source, count, inc_order); 
+  sorted = bubble_sort(source, /*2**/count, inc_order); /* lie here unnoticed */
   check(sorted, "inc_order sort failed");
   print_numbers(sorted, count);
   cfree(sorted);
@@ -60,7 +60,7 @@ int test_sorting(int * source, const int count)
   cfree(sorted);
 
   sorted = bubble_sort(source, count, oddeven_order); 
-  check(sorted, "rand_order sort failed");
+  check(sorted, "oddeven_order sort failed");
   print_numbers(sorted, count);
   cfree(sorted);
 
