@@ -11,31 +11,31 @@
 #define cfree(p) { free((p)); (p) = NULL; }
 
 #define MAXDATA    20
-#define MAXRECORDS 200 
+#define MAXRECORDS 200
 
 typedef struct Address {
-  int idx;                  /* index in conn->db[] */
-  int set;                  /* set = 1: address is stored at conn->db[idx] */ 
-  char nickname[MAXDATA];
-  char name[MAXDATA];
-  char email[MAXDATA];
-} Address;
+    int             idx;	/* index in conn->db[] */
+    int             set;	/* set = 1: address is stored at conn->db[idx] */
+    char            nickname[MAXDATA];
+    char            name[MAXDATA];
+    char            email[MAXDATA];
+}               Address;
 
 typedef struct Database {
-  Address records[MAXRECORDS];
-} Database;
+    Address         records[MAXRECORDS];
+}               Database;
 
 typedef struct Connection {
-  FILE * db_file;
-  char * db_name;
-  Database * db;
-  int mode;                  /* modes for Connection_open() */
-} Connection;
+    FILE           *db_file;
+    char           *db_name;
+    Database       *db;
+    int             mode;	/* modes for Connection_open() */
+}               Connection;
 
-// void die (const char * message);
+//void          die(const char *message);
 
 /*
-  copy source to target 
+  copy source to target
   truncate such that target fits to MAXDATA
   return 0/1, if OK/failure
   (hidden implementation in ex17-lib.h)
@@ -44,46 +44,47 @@ typedef struct Connection {
 */
 
 /*
-  email, name are mandatory fields 
-  idx, set = 0 
-  nickname will be defaulted 
+  email, name are mandatory fields
+  idx, set = 0
+  nickname will be defaulted
   returns NULL, if an error occurs
 */
-Address * Address_create(const char * nickname, 
-			 const char * name, const char * email);
+Address        *
+Address_create(const char *nickname,
+               const char *name, const char *email);
 
 /*
   free allocated memory of record
   return 0/1, if OK/failure
 */
-int Address_delete(Address * record);
+int             Address_delete(Address * record);
 
-void Address_print(const Address * record);
+void            Address_print(const Address * record);
 
 /*
   run database lifecycle
 */
-void Database_run(void);
+void            Database_run(void);
 
 /*
   create db structure in db file, if connection mode permits
-  set mode to 'w', if OK 
+  set mode to 'w', if OK
   return 0/1, if OK/failure
 */
-int Database_createdb(Connection * conn);
+int             Database_createdb(Connection * conn);
 
 /*
   flush database to db_file
   return 0/1, if OK/failure
 */
-int Database_flushdb(Connection * conn);
+int             Database_flushdb(Connection * conn);
 
 /*
   delete db file, if connection is valid and mode permits
-  free memory allocated for db 
+  free memory allocated for db
   return 0/1, if OK/failure
 */
-int Database_deletedb(Connection * conn);
+int             Database_deletedb(Connection * conn);
 
 //DataBase_open();
 
@@ -93,44 +94,44 @@ int Database_deletedb(Connection * conn);
   load database from file
   return 0, if OK
 */
-int Database_loaddb(Connection * conn);
+int             Database_loaddb(Connection * conn);
 
 /*
   write record at idx to file, if connection mode permits
   return 0/1, if OK/failure
 */
-int Database_writebyidx(Connection * conn, const int idx);
+int             Database_writebyidx(Connection * conn, const int idx);
 
 /*
   free index in connected database, if connection mode permits
   free allocated memory of record
   return 0/1, if OK/failure
 */
-int Database_deletebyidx(Connection * conn, const int idx);
+int             Database_deletebyidx(Connection * conn, const int idx);
 
 /*
   return free idx, if OK
   return MAXRECORDS, if failure
 */
-int Database_getfreeidx(Connection * conn);
+int             Database_getfreeidx(Connection * conn);
 
 /*
   set address.set and address.idx
   write record at idx to file
   return 0/1, if OK/failure
 */
-int Database_set(Connection * conn, const Address * record);
+int             Database_set(Connection * conn, const Address * record);
 
 /*
   return NULL, if Address not found/error
 */
-Address * Database_getbyidx(Connection * conn, const int idx);
+Address        *Database_getbyidx(Connection * conn, const int idx);
 
 
 /*
   dump database to stdout
 */
-void Database_list(Connection * conn);
+void            Database_list(Connection * conn);
 
 /*
   mode 'c': create & init local database file; die, if file exists
@@ -140,11 +141,11 @@ void Database_list(Connection * conn);
   ### mode 'd': delete database file; die, if file not exists
   > return NULL
 */
-Connection * Connection_open(const char * db_name, const char mode);
+Connection     *Connection_open(const char *db_name, const char mode);
 
 /*
   return 0/1, if OK/failure
 */
-int Connection_close(Connection * conn);
+int             Connection_close(Connection * conn);
 
 #endif

@@ -1,0 +1,57 @@
+Learn C THe Hard Way, Chapter 27
+--------------------------------
+by Zed A. Shaw
+
+What We Want To Make
+--------------------
+We want a tool that has five commands:
+o Sets up a new install on a computer.
+o Installs a piece of software from a URL.
+o Lists all the software that's been installed.
+o Fetches some source code for manual building.
+o Builds fetches source code and installs it, even if already installed.
+We want devpkg to be able to take almost any URL, figure out what kind of project 
+it is, download it, install it, and register that it downloaded that software. 
+We'd also like it to process a simple dependency list so it can install all the 
+software that a project might need as well.
+
+The Design
+----------
+To accomplish this goal devpkg will have a very simple design:
+
+o Use external commands
+
+You'll do most of the work through external commands like curl, git, and tar. 
+This reduces the amount of code devpkg needs to get things done.
+
+o Simple File Database
+
+You could easily make it more complex, but to start you'll just make a single 
+simple file database at /usr/local/.devpkg/db to keep track of what's installed.
+
+o /usr/local Always
+
+Again you could make this more advanced, but for starters just assume it's always 
+/usr/local which is a standard install path for most software on Unix.
+
+o configure, make, make install
+
+It's assumed that most software can install with just a configure; make; make 
+install and maybe configure is optional. If the software can't at a minimum do 
+that, then there's some options to modify the commands, but otherwise devpkg won't 
+bother.
+
+o The User Can Be root
+
+We'll assume the user can become root using sudo, but that they don't want to 
+become root until the end.
+
+The Apache Portable Runtime
+---------------------------
+One more thing you'll do is leverage the The Apache Portable Runtime (APR) 
+libraries to get a good set of portable routines for doing this kind of work. 
+The APR isn't necessary, and you could probably write this program without them, 
+but it'd take more code than necessary. I'm also forcing you to use APR now so 
+you get used to linking and using other libraries. Finally, the APR also works 
+on Windows so your skills with it are transferable to many other platforms.
+

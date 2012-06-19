@@ -1,8 +1,8 @@
 #include "ex17.h"
 
-int main (int argc, char * argv[])
-{
-  Database_run();
+int
+main(int argc, char *argv[]) {
+    Database_run();
 
-  return 0;
+    return 0;
 }

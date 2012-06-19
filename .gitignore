@@ -1,6 +1,13 @@
 *.dSYM
+*.o
 test.db
 gmon.out
 .DS_Store
 ex?
 ex??
+*.zip
+*.tgz
+*.bz2
+*.tar
+*.gz
+devpkg/devpkg

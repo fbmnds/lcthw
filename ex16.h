@@ -14,22 +14,22 @@
 #define FEMALE 2
 
 typedef struct Person {
-  char name[MAXDATA];
-  char address[MAXDATA];
-  int age;
-  int gender;
-  long id;
-} Person;
+    char            name[MAXDATA];
+    char            address[MAXDATA];
+    int             age;
+    int             gender;
+    long            id;
+}               Person;
 
 /*
-  name is mandatory field, id will be generated, other fields will be defaulted 
+  name is mandatory field, id will be generated, other fields will be defaulted
   returns NULL, if an error occurs
 */
-Person * Person_create(const char *, const char *, const int, const int);
+Person         *Person_create(const char *, const char *, const int, const int);
 
-void Person_delete(Person *);
+void            Person_delete(Person *);
 
-void Person_print(Person *);
+void            Person_print(Person *);
 
 
-#endif /* EX16_H */
+#endif				/* EX16_H */

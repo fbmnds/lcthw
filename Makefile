@@ -19,5 +19,5 @@ ex22: ex22.c ex22-main.c ex22.h
 ex24: ex24.c
 
 clean:
-	rm ex? || rm ex?? || echo
+	rm ex? -f || rm -f ex?? || rm -rf *.dSYM || echo
 #	touch *.c
