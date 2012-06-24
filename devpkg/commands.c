@@ -41,8 +41,8 @@ int Command_fetch(apr_pool_t *p, const char *url, int fetch_only)
     apr_uri_t info = {.port = 0};
     int rc = 0;
     const char *depends_file = NULL; 
-    apr_status_t rv = apr_uri_parse(p, url, &info);
  
+    apr_status_t rv = apr_uri_parse(p, url, &info);
     check(rv == APR_SUCCESS, "Failed to parse URL: %s", url);
  
     if(apr_fnmatch(GIT_PAT, info.path, 0) == APR_SUCCESS) { 

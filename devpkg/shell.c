@@ -25,18 +25,18 @@ int Shell_exec(Shell template, ...)
                 break; // found it }
             }
         }
-        rc = Shell_run(p, &template);
-
-        apr_pool_destroy(p);
-        va_end(argp);
-
-        return rc;
-error:
-        if(p) {
-            apr_pool_destroy(p);
-        }
-        return rc;
     }
+    rc = Shell_run(p, &template);
+    
+    apr_pool_destroy(p);
+    va_end(argp);
+    
+    return rc;
+error:
+    if(p) {
+        apr_pool_destroy(p);
+    }
+    return rc;
 }
 
 int Shell_run(apr_pool_t *p, Shell *cmd) 

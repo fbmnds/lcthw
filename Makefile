@@ -19,5 +19,6 @@ ex22: ex22.c ex22-main.c ex22.h
 ex24: ex24.c
 
 clean:
-	rm ex? -f || rm -f ex?? || rm -rf *.dSYM || echo
+	@echo "FIXME rm ex? -f || rm -f ex?? || rm -rf *.dSYM || echo"
+	@echo "FIXME do not remove directory 'ex29'"
 #	touch *.c

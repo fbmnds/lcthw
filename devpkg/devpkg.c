@@ -25,7 +25,6 @@ int main(int argc, const char const *argv[])
     const char *url = NULL;
     enum CommandType request = COMMAND_NONE; 
 
-
     rv = apr_getopt_init(&opt, p, argc, argv);
  
     while(apr_getopt(opt, "I:Lc:m:i:d:SF:B:", &ch, &optarg) == APR_SUCCESS) { 
