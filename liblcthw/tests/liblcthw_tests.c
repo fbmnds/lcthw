@@ -14,6 +14,9 @@ char *values[] = { "ONE", "TWO", "THREE", "FOUR", "FIVE", NULL };
 
 void *test_list_create()
 {
+  printf("test_list_create()\n");
+  printf("------------------\n");
+
   list = List_create();
 
   check((list), "List_create returned NULL");
@@ -21,6 +24,7 @@ void *test_list_create()
   check(!(list->last), "list->last invalid");
   check(!list->count, "list->count invalid");
 
+  printf("(done.)\n");
   return NULL;
  error:
   return "List_create failed";
@@ -28,10 +32,14 @@ void *test_list_create()
 
 void *test_list_destroy()
 {
-  int rc = List_destroy(list);
+  int rc;
+  printf("test_list_destroy()\n");
+  printf("-------------------\n");
   
-
+  rc = List_destroy(&list);
   check(!rc, "List_destroy return code = %d", rc);
+
+  printf("(done.)\n");
   return NULL;
  error:
   return "List_destroy failed";
@@ -39,8 +47,15 @@ void *test_list_destroy()
 
 void *test_list_clear()
 {
-  int rc = List_clear(list);
+  int rc;
+
+  printf("test_list_clear()\n");
+  printf("-----------------\n");
+
+  rc = List_clear(list);
   check(!rc, "List_clear return code = %d", rc);
+
+  printf("(done.)\n");
   return NULL;
  error:
   return "List_clear failed";
@@ -50,8 +65,11 @@ void *test_list_push()
 {
   char **vp = values;
 
+  printf("test_list_push()\n");
+  printf("----------------\n");
+
   while (*vp) {
-    check((!(List_push(list, (void *) *vp))), "List_push failed on %s", *vp);
+    check((!(List_push(&list, (void *) *vp))), "List_push failed on %s", *vp);
     vp++;
   }
 
@@ -61,6 +79,7 @@ void *test_list_push()
   }
   NL;
 
+  printf("(done.)\n");
   return NULL;
  error:
   return "List_push failed";
@@ -70,7 +89,9 @@ void *test_list_pop()
 {
   void *value;
 
- 
+  printf("test_list_pop()\n");
+  printf("---------------\n");
+
   value = List_pop(list);
   //  check((!strcmp((char *) value, "FIVE")), "strcmp failed");
   cfree(value);
@@ -88,6 +109,7 @@ void *test_list_pop()
   
   check(1, "avoid warning");
 
+  printf("(done.)\n");
   return NULL;
  error:
   return "List_pop failed";
@@ -99,7 +121,7 @@ void *all_tests()
   mu_suite_start();
   mu_run_test(test_list_create);
   mu_run_test(test_list_destroy); /* destroy empty list */
-  list = NULL;
+  if (!list) printf("list is NULL after List_destroy()\n");
   mu_run_test(test_list_create);
   //mu_run_test(test_list_clear); /* clear empty list */
   mu_run_test(test_list_push);
@@ -108,15 +130,15 @@ void *all_tests()
   mu_run_test(test_list_pop);
   mu_run_test(test_list_pop);
   mu_run_test(test_list_pop); /* pop until list is exhausted */
-  //  mu_run_test(test_list_destroy);
-  // mu_run_test(test_list_create);
-  //  mu_run_test(test_list_clear);
   mu_run_test(test_list_destroy); /* destroy exhausted list */
-  list = NULL;
-  //mu_run_test(test_list_push); /* push creates list, if necessary */
+  if (!list) printf("list is NULL after List_destroy()\n");
+  mu_run_test(test_list_destroy); /* destroy destroyed list */
+  if (!list) printf("list is NULL after List_destroy()\n");
+  mu_run_test(test_list_push); /* push creates list, if necessary */
   mu_run_test(test_list_destroy);
-  list = NULL;
-  /**/
+  if (!list) printf("list is NULL after List_destroy()\n");
+  NL;
+
   return NULL;
 }
 

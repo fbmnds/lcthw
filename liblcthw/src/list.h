@@ -26,7 +26,7 @@ List * List_create(void);
 /*
   return 0/1, if ok/error
 */
-int List_destroy(List *list);
+int List_destroy(List **list);
 /*
   return 0/1, if ok/error
 */
@@ -39,7 +39,7 @@ int List_clear(List *list);
 /*
   return 0/1, if ok/error
 */
-int List_push(List *list, void *value);
+int List_push(List **list, void *value);
 void *List_pop(List *list);
 
 /*
