@@ -3,27 +3,6 @@
 #include "list.h"
 #include "dbg.h"
  
-#define cfree(p) if ((p) != NULL) { free((p)); (p) = NULL; }
-
-#define INV_COUNT_0 { assert(list->first == NULL);\
-    assert(list->last == NULL);\
-} 
- 
-#define INV_COUNT_1 { assert(list->first);\
-    assert(list->first == list->last);\
-    assert(list->first->prev == NULL);\
-    assert(list->first->next == NULL);\
-}
-
-#define INV_COUNT_GT_1 { assert(list->first);\
-    assert(list->last);\
-    assert(list->first != list->last);\
-    assert(list->first->prev == NULL);\
-    assert(list->first->next != NULL);\
-    assert(list->last->prev != NULL);\
-    assert(list->last->next == NULL);\
-}
-
 List * List_create(void)
 {
   return calloc(1, sizeof(List));
@@ -37,17 +16,17 @@ int List_destroy(List **lst)
 
   switch (list->count) {
   case 0:
-    INV_COUNT_0;
+    INV_COUNT_0(list);
     cfree(list);
     break;
   case 1:
-    INV_COUNT_1;
+    INV_COUNT_1(list);
     DTOR(list->first->value);
     cfree(list->first);
     cfree(list);    
     break;
   default:
-    INV_COUNT_GT_1;
+    INV_COUNT_GT_1(list);
     LIST_FOREACH (list, first, next, iter) {
       list->count--;
       DTOR(iter->value);
@@ -104,9 +83,9 @@ int List_push(List **lst, void *value)
   if (!(*lst)) *lst = List_create();
   list = *lst;
 
-  if (list->count == 0) INV_COUNT_0;
-  if (list->count == 1) INV_COUNT_1;
-  if (list->count > 1) INV_COUNT_GT_1;
+  if (list->count == 0) INV_COUNT_0(list);
+  if (list->count == 1) INV_COUNT_1(list);
+  if (list->count > 1) INV_COUNT_GT_1(list);
 
   if(!value) log_warn("received empty value");
 
@@ -123,11 +102,11 @@ int List_push(List **lst, void *value)
 
   if (list->count == 1) {
     list->last = list->first;
-    INV_COUNT_1;
+    INV_COUNT_1(list);
   }
   if (list->count > 1) {
     list->first->next->prev = list->first;
-    INV_COUNT_GT_1;
+    INV_COUNT_GT_1(list);
   }
 
   return 0;
@@ -143,8 +122,8 @@ void *List_pop(List *list)
   if (!list || !list->count) return NULL;
 
   assert(list->count > 0);
-  if (list->count == 1) INV_COUNT_1;
-  if (list->count > 1) INV_COUNT_GT_1
+  if (list->count == 1) INV_COUNT_1(list);
+  if (list->count > 1) INV_COUNT_GT_1(list);
 
   list->count--;
   rv = list->first;
@@ -158,18 +137,18 @@ void *List_pop(List *list)
   if (list->count == 0) {
     list->first = NULL;
     list->last = NULL;
-    INV_COUNT_0;
+    INV_COUNT_0(list);
   }
   if (list->count == 1) {
     list->first->prev = NULL;
     list->first->next = NULL;
     list->last = list->first;
-    INV_COUNT_1;
+    INV_COUNT_1(list);
   }
   if (list->count > 1) {
     list->first->prev = NULL;
     list->last->next = NULL;
-    INV_COUNT_GT_1;
+    INV_COUNT_GT_1(list);
   }
 
   return value;

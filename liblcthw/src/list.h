@@ -1,11 +1,35 @@
 #ifndef LIST_H
 #define LIST_H
 
+#define cfree(p) if ((p) != NULL) { free((p)); (p) = NULL; }
+
 typedef struct ListNode {
   struct ListNode *prev;
   struct ListNode *next;
   void * value;
 } ListNode;
+
+#define INV_COUNT_0(list) { assert((list)->count == 0);\
+    assert((list)->first == NULL);\
+    assert((list)->last == NULL);\
+} 
+ 
+#define INV_COUNT_1(list) { assert((list)->count == 1);\
+    assert((list)->first);\
+    assert((list)->first == (list)->last);\
+    assert((list)->first->prev == NULL);\
+    assert((list)->first->next == NULL);\
+}
+
+#define INV_COUNT_GT_1(list) { assert((list)->count > 1);\
+    assert((list)->first);\
+    assert((list)->last);\
+    assert((list)->first != (list)->last);\
+    assert((list)->first->prev == NULL);\
+    assert((list)->first->next != NULL);\
+    assert((list)->last->prev != NULL);\
+    assert((list)->last->next == NULL);\
+}
 
 #define DTOR(P) cfree(P)
  

@@ -1,4 +1,6 @@
 #include "list.h"
+#include "list_algos.h"
+
 #include "dbg.h"
 #include "minunit.h"
 
@@ -115,7 +117,24 @@ void *test_list_pop()
   return "List_pop failed";
 }
 
+void *test_create_index()
+{
+  Index *listindex;
+  Index *idx;
+ 
+  check((listindex = create_index(list)), "listindex invalid");
+  idx = listindex;
 
+  for(int i = 0; i < list->count; idx++, i++)
+    printf("Index[%d] = %c\n", i, *((char *) *idx));
+
+  //cfree(valuearray);
+  cfree(listindex);
+  printf("(done.)\n");
+  return NULL;
+ error:
+  return "List_pop failed";
+}
 void *all_tests()
 {
   mu_suite_start();
@@ -135,6 +154,7 @@ void *all_tests()
   mu_run_test(test_list_destroy); /* destroy destroyed list */
   if (!list) printf("list is NULL after List_destroy()\n");
   mu_run_test(test_list_push); /* push creates list, if necessary */
+  mu_run_test(test_create_index);
   mu_run_test(test_list_destroy);
   if (!list) printf("list is NULL after List_destroy()\n");
   NL;
