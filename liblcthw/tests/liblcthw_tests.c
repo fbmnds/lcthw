@@ -11,8 +11,9 @@
 #define cfree(p) if ((p) != NULL) { free((p)); (p) = NULL; }
 #define NL printf("\n")
 
-List *list;
-char *values[] = { "ONE", "TWO", "THREE", "FOUR", "FIVE", NULL };
+static List *list;
+static char *values[] = { "ONE", "TWO", "THREE", "FOUR", "FIVE", NULL };
+static Index * listindex;
 
 void *test_list_create()
 {
@@ -119,22 +120,45 @@ void *test_list_pop()
 
 void *test_create_index()
 {
-  Index *listindex;
   Index *idx;
- 
+
+  printf("test_create_index()\n");
+  printf("-------------------\n");
+
   check((listindex = create_index(list)), "listindex invalid");
   idx = listindex;
 
   for(int i = 0; i < list->count; idx++, i++)
     printf("Index[%d] = %c\n", i, *((char *) *idx));
 
-  //cfree(valuearray);
   cfree(listindex);
   printf("(done.)\n");
   return NULL;
  error:
   return "List_pop failed";
 }
+
+void *test_bubble_sort()
+{
+  Index *idx;
+
+  printf("test_bubble_sort()\n");
+  printf("------------------\n");
+
+  check((listindex = bubble_sort(list, &cmp_TYPE_gt)), "listindex invalid");
+  idx = listindex;
+
+  for(int i = 0; i < list->count; idx++, i++)
+    printf("Index[%d] = %c\n", i, *((char *) *idx));
+
+  cfree(listindex);
+  printf("(done.)\n");
+  return NULL;
+ error:
+  return "List_pop failed";
+}
+
+
 void *all_tests()
 {
   mu_suite_start();
@@ -154,7 +178,10 @@ void *all_tests()
   mu_run_test(test_list_destroy); /* destroy destroyed list */
   if (!list) printf("list is NULL after List_destroy()\n");
   mu_run_test(test_list_push); /* push creates list, if necessary */
+  mu_run_test(test_list_push);
+  mu_run_test(test_list_push);
   mu_run_test(test_create_index);
+  mu_run_test(test_bubble_sort);
   mu_run_test(test_list_destroy);
   if (!list) printf("list is NULL after List_destroy()\n");
   NL;
