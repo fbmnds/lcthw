@@ -12,7 +12,7 @@
 #define NL printf("\n")
 
 static List *list;
-static char *values[] = { "ONE", "TWO", "THREE", "FOUR", "FIVE", NULL };
+static char *values[] = { "1ONE", "2TWO", "3THREE", "4FOUR", "5FIVE", NULL };
 static Index * listindex;
 
 void *test_list_create()
@@ -135,7 +135,7 @@ void *test_create_index()
   printf("(done.)\n");
   return NULL;
  error:
-  return "List_pop failed";
+  return "create_index() failed";
 }
 
 void *test_bubble_sort()
@@ -145,7 +145,7 @@ void *test_bubble_sort()
   printf("test_bubble_sort()\n");
   printf("------------------\n");
 
-  check((listindex = bubble_sort(list, &cmp_TYPE_gt)), "listindex invalid");
+  check((listindex = bubble_sort(list, &cmp_TYPE_lt)), "listindex invalid");
   idx = listindex;
 
   for(int i = 0; i < list->count; idx++, i++)
@@ -155,9 +155,28 @@ void *test_bubble_sort()
   printf("(done.)\n");
   return NULL;
  error:
-  return "List_pop failed";
+  return "bubble_sort() failed";
 }
 
+void *test_merge_sort()
+{
+  Index *idx;
+
+  printf("test_merge_sort()\n");
+  printf("------------------\n");
+
+  check((listindex = merge_sort(list, &cmp_TYPE_lt)), "listindex invalid");
+  idx = listindex;
+
+  for(int i = 0; i < list->count; idx++, i++)
+    printf("Index[%d] = %c\n", i, *((char *) *idx));
+
+  cfree(listindex);
+  printf("(done.)\n");
+  return NULL;
+ error:
+  return "merge_sort() failed";
+}
 
 void *all_tests()
 {
@@ -181,7 +200,8 @@ void *all_tests()
   mu_run_test(test_list_push);
   mu_run_test(test_list_push);
   mu_run_test(test_create_index);
-  mu_run_test(test_bubble_sort);
+  mu_run_test(test_merge_sort);
+  mu_run_test(test_merge_sort);
   mu_run_test(test_list_destroy);
   if (!list) printf("list is NULL after List_destroy()\n");
   NL;

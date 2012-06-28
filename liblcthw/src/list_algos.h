@@ -14,9 +14,9 @@ Index *create_index(List*);
 
 typedef int (cmp_func)(void *, void *);
 /*
- returns 1/0/-1 if arg1 >/<= arg2/error
+ returns 1/0/-1 if arg1 </>= arg2/error
 */
-cmp_func cmp_TYPE_gt;
+cmp_func cmp_TYPE_lt;
 /*
   returns the bubble-sorted array of List element pointers
   return NULL, if error
