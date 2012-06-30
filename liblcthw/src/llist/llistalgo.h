@@ -1,7 +1,7 @@
 #ifndef LIST_ALGOS_H
 #define LIST_ALGOS_H
 
-#include "list.h"
+#include "llist.h"
 
 typedef int TYPE; /* generic value TYPE, e.g. int */
 typedef TYPE *Index;

@@ -1,5 +1,6 @@
-#include "list_algos.h"
-#include "dbg.h"
+#include "llistalgo.h"
+#include "misc/misc.h"
+#include "misc/dbg.h"
 
 #include <stdlib.h>
 #include <assert.h>
@@ -19,12 +20,8 @@ Index *create_index(List* list)
     *listindex = (TYPE *)list->first->value;
   else { /* list->count > 1 */
     idx = listindex;
-    LIST_FOREACH(list, first, next, iter)// {
-      //printf("create_index %c  ", *((char*)iter->value));
+    LIST_FOREACH(list, first, next, iter)
       *idx++ = (TYPE *) iter->value;
-      //printf(" idx = %c\n",*((char*)*idx));
-      //idx++;
-      //}
   }
 
   return listindex;
@@ -54,6 +51,7 @@ Index *bubble_sort(List *list, cmp_func *cmp)
   Index *listindex;
   TYPE *tmp;
 
+  check(cmp, "compare function pointer is NULL");
   check(list, "received list nullpointer");
   check(cmp, "received function nullpointer");
   assert(list->count >= 0);
@@ -85,13 +83,18 @@ Index *bubble_sort(List *list, cmp_func *cmp)
 }
 
 
-static void merge_queues(Index *listindex, Index **sortedlistindex, int count, int idx1, int idx2, cmp_func *cmp)
+static void merge_queues(Index *listindex, 
+			 Index **sortedlistindex, 
+			 int count,
+			 int idx1, int idx2,
+			 cmp_func *cmp)
 {
   int length = idx2 - idx1;
   int s1 = idx1 + length;
   int s2 = idx2 + length;
   int sortedidx = idx1;
 
+  check(cmp, "compare function pointer is NULL");
   assert(length > 0);
   assert(s1 < s2);
 
@@ -118,13 +121,15 @@ static void merge_queues(Index *listindex, Index **sortedlistindex, int count, i
     }
   }
 
-  assert(((idx1 == s1) || (idx1 == count)) && 
-	 ((idx2 == s2) || (idx2 == count)) &&
-	 ((sortedidx == s2) || (sortedidx == count)));
+  if (!((idx1 < count) && (idx2 < count) && (sortedidx < count)))
+    assert(((idx1 == s1) || (idx1 == count)) && 
+	   ((idx2 == s2) || (idx2 == count)) &&
+	   ((sortedidx == s2) || (sortedidx == count)));
   assert(idx1 <= count);
   assert(idx2 <= count);
   assert(sortedidx <= count);
 
+ error:
   return;
 }
 
@@ -136,6 +141,7 @@ Index *merge_sort(List *list, cmp_func *cmp)
   int idx1, idx2;
   int length;
 
+  check(cmp, "compare function pointer is NULL");
   check(list, "received list nullpointer");
   check(cmp, "received function nullpointer");
   assert(list->count >= 0);

@@ -1,7 +1,9 @@
 #include <assert.h>
 #include <stdlib.h>
-#include "list.h"
-#include "dbg.h"
+
+#include "llist.h"
+#include "misc/misc.h"
+#include "misc/dbg.h"
  
 List * List_create(void)
 {
@@ -69,10 +71,6 @@ int List_clear(List *list)
 
   return 0;
 }
-
-#define List_count(L) ((L)->count)
-#define List_first(L) ((L)->first)
-#define List_last(L) ((L)->last)
 
 int List_push(List **lst, void *value)
 {

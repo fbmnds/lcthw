@@ -1,15 +1,13 @@
-#include "list.h"
-#include "list_algos.h"
+#include "llist/llist.h"
+#include "llist/llistalgo.h"
 
-#include "dbg.h"
-#include "minunit.h"
+#include "misc/misc.h"
+#include "misc/dbg.h"
+#include "../minunit.h"
 
 #include<string.h>
 #include<stdlib.h>
 #include <assert.h>
-
-#define cfree(p) if ((p) != NULL) { free((p)); (p) = NULL; }
-#define NL printf("\n")
 
 static List *list;
 static char *values[] = { "1ONE", "2TWO", "3THREE", "4FOUR", "5FIVE", NULL };

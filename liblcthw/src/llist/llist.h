@@ -1,8 +1,6 @@
 #ifndef LIST_H
 #define LIST_H
 
-#define cfree(p) if ((p) != NULL) { free((p)); (p) = NULL; }
-
 typedef struct ListNode {
   struct ListNode *prev;
   struct ListNode *next;
