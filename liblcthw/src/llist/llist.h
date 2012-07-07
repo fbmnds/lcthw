@@ -29,14 +29,22 @@ typedef struct ListNode {
     assert((list)->last->next == NULL);\
 }
 
-#define DTOR(P) cfree(P)
- 
+
+
+#ifdef DTOR 
 /*
   provide destructor for compound value types: 
-
-extern void (*dtor) (valuetype *); 
-#define DTOR(P) dtor(P)
 */
+extern void (dtor_for_valuetype) (void *); 
+/*
+
+  provide this makro:
+#define DTOR(P) dtor_for_valuetype(P)
+*/
+#else
+#define DTOR(P) cfree(P)
+#endif
+
 
 typedef struct List {
   int count;
