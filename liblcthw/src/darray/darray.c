@@ -7,7 +7,7 @@
 
 DArray *DArray_create(size_t element_size, size_t initial_max)
 {
-  DArray *ret;
+  DArray *ret = NULL;
 
   check ((element_size >= 0), "invalid negative element size");
   check ((initial_max > 0), "invalid zero or negative initial array capacity");
@@ -20,6 +20,7 @@ DArray *DArray_create(size_t element_size, size_t initial_max)
 
   ret->element_size = element_size;
   ret->expand_rate = DEFAULT_EXPAND_RATE;
+  ret->max = DEFAULT_EXPAND_RATE;
 
   return ret;
  error:
@@ -44,25 +45,27 @@ void DArray_clear(DArray *array)
   return;
 }
 
-int DArray_expand(DArray *array)
+int DArray_expand(DArray **array)
 {
-  void **tmp;
+  void *tmp = NULL;
 
   check(array, "cannot expand on null pointer to darray");
 
   errno = 0;
-  if (array->contents) {
-    tmp = realloc(array->contents, array->max + array->expand_rate);
-    check(((!tmp) || errno), "realloc failed");
+  if ((*array)->contents) {
+    tmp = realloc((*array)->contents, 
+		  (((*array)->max + (*array)->expand_rate)) * sizeof(void*));
+    check((((*array)->contents) && !errno), "realloc failed");
   } else {
-    tmp = calloc(array->max + array->expand_rate, sizeof(void*));
-    check(((!tmp) || errno), "calloc failed");
+    return 1;
+    tmp = calloc((*array)->max + (*array)->expand_rate, sizeof(void*));
+    check((tmp && !errno), "calloc failed");
   }
-  array->contents = tmp;
-  DArray_max(array) += array->expand_rate; 
-  array->expand_rate <<= 2;
-  array->expand_rate = array->expand_rate < MAX_EXPAND_RATE ?
-	  array->expand_rate : MAX_EXPAND_RATE;
+  (*array)->contents = tmp;
+  (*array)->max += (*array)->expand_rate; 
+  (*array)->expand_rate <<= 2;
+  (*array)->expand_rate = (*array)->expand_rate < MAX_EXPAND_RATE ?
+    (*array)->expand_rate : MAX_EXPAND_RATE;
 
   return 0;
  error:
@@ -102,7 +105,7 @@ int DArray_push(DArray *array, void *el)
   assert(array->end <= array->max && "inconsistent darray capacity");
 
   if (array->end == array->max) 
-    check(!DArray_expand(array), "expand of darray failed");
+    check(!DArray_expand(&array), "expand of darray failed");
 
   return DArray_set(array, array->end, el);
  error:
