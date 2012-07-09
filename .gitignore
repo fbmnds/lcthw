@@ -17,3 +17,5 @@ devpkg/devpkg
 *TAGS
 liblcthw/tests/*/*_tests
 ID
+*.exe
+
