@@ -1,15 +1,14 @@
 #include "darray/darray.h"
-
 #include "misc/misc.h"
 #include "misc/dbg.h"
-#include "../minunit.h"
+#include "minunit.h"
 
 #include<string.h>
 #include<stdlib.h>
 #include <assert.h>
 
 static DArray* array;
-#define CONTLEN 300
+#define CONTLEN 65
 static int *content[CONTLEN];
 
 void init_content()
@@ -20,6 +19,21 @@ void init_content()
   }
 }
 
+inline static void DArray_print(DArray *array)
+{
+  check(array, "received null pointer to darray");
+  check(array->contents, "received null pointer to darray content");
+  assert((array->max && (array->max >= array->end)) && 
+	 "inconsistent array capacity");
+
+  for (int i = 0; i < array->end; i++) {
+    printf("array[%d] = %d\n", i, *((int *)(array->contents[i])));
+  }
+
+ error: /* fallthrough */
+  return;
+}
+
 void *test_darray_create()
 {
   printf("test_darray_create()\n");
@@ -28,7 +42,8 @@ void *test_darray_create()
   array = DArray_create(sizeof(int*), (size_t) DEFAULT_EXPAND_RATE);
 
   check((array), "DArray_create returned NULL");
-  
+
+  DArray_print(array);
 
   printf("(done.)\n");
   return NULL;
@@ -39,8 +54,8 @@ void *test_darray_create()
 void *test_darray_destroy()
 {
   int rc;
-  printf("test_array_destroy()\n");
-  printf("--------------------\n");
+  printf("test_darray_destroy()\n");
+  printf("---------------------\n");
   
   rc = DArray_destroy(&array);
   check(!rc, "DArray_destroy return code = %d", rc);
@@ -49,6 +64,25 @@ void *test_darray_destroy()
   return NULL;
  error:
   return "DArray_destroy failed";
+}
+
+void *test_darray_push()
+{
+  int rc;
+  printf("test_darray_push()\n");
+  printf("------------------\n");
+  
+  for (int i = 0; i < CONTLEN; i++) {
+    rc = DArray_push(array, content[i]);
+    check(!rc, "DArray_push return code = %d", rc);
+  }
+
+  DArray_print(array);
+
+  printf("(done.)\n");
+  return NULL;
+ error:
+  return "DArray_push failed";
 }
 
 void *all_tests()
@@ -61,8 +95,8 @@ void *all_tests()
   mu_run_test(test_darray_destroy); /* destroy empty darray */
   mu_run_test(test_darray_create);
   //mu_run_test(test_darray_clear); /* clear empty darray */
-#if 0
   mu_run_test(test_darray_push);
+#if 0
   mu_run_test(test_darray_pop);
   mu_run_test(test_darray_push);
   mu_run_test(test_darray_pop);

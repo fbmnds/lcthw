@@ -3,7 +3,7 @@
 
 #include "misc/misc.h"
 #include "misc/dbg.h"
-#include "../minunit.h"
+#include "minunit.h"
 
 #include<string.h>
 #include<stdlib.h>
@@ -75,7 +75,7 @@ void *test_list_push()
   }
 
   LIST_FOREACH(list, first, next, iter) {
-    printf("after push %s \n", iter->value);
+    printf("after push %s \n", (char *) iter->value);
     //    check((!strcmp(iter->value, *(--vp))), "strcmp failed");
   }
   NL;
@@ -104,7 +104,7 @@ void *test_list_pop()
   cfree(value);
 
   LIST_FOREACH(list, first, next, iter) {
-    printf("after pop: %s\n", iter->value);
+    printf("after pop: %s\n", (char *) iter->value);
   }
   NL;
   

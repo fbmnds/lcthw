@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+
 #include "misc/misc.h"
 #include "misc/dbg.h"
 
@@ -20,7 +21,7 @@ int DArray_destroy(DArray **array);
 
 void DArray_clear(DArray *array);
 
-int DArray_expand(DArray *array);
+int DArray_expand(DArray **array);
 
 int DArray_contract(DArray *array);
 
