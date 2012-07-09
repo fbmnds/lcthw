@@ -2,7 +2,15 @@
 
 echo "Running unit tests:"
 
-for i in tests/*/*_tests 
+if test $OSTYPE = "cygwin"
+then
+PATH=$PATH:build
+EXECS=tests/*/*_tests.exe
+else
+EXECS=tests/*/*_tests
+fi
+
+for i in $EXECS
 do
     if test -f $i 
     then
