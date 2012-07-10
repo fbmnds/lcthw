@@ -23,10 +23,10 @@ inline static void DArray_print(DArray *array)
 {
   check(array, "received null pointer to darray");
   check(array->contents, "received null pointer to darray content");
-  assert((array->max && (array->max >= array->end)) && 
+  assert((array->max && (array->max >= array->count)) && 
 	 "inconsistent array capacity");
 
-  for (int i = 0; i < array->end; i++) {
+  for (int i = 0; i < array->count; i++) {
     printf("array[%d] = %d\n", i, *((int *)(array->contents[i])));
   }
 

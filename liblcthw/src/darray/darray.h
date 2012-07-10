@@ -1,5 +1,5 @@
-#ifndef _DArray_h 
-#define _DArray_h 
+#ifndef _DARRAY_H 
+#define _DARRAY_H 
 
 #include <stdlib.h>
 #include <assert.h>
@@ -8,7 +8,7 @@
 #include "misc/dbg.h"
 
 typedef struct DArray { 
-  int end;              /* index + 1 of last element of darray */
+  int count;            /* equals index + 1 of last element of darray */
   int max;              /* max number of elements, always > 0 */
   size_t element_size;  /* size of a content element */
   size_t expand_rate;
@@ -31,24 +31,29 @@ void *DArray_pop(DArray *array);
 
 void DArray_clear_destroy(DArray *array);
 
-#define DArray_last(A) ((A)->contents[(A)->end - 1])
+#define DArray_last(A) ((A)->contents[(A)->count - 1])
 #define DArray_first(A) ((A)->contents[0])
-#define DArray_end(A) ((A)->end)       /* index + 1 of last element of darray */
-#define DArray_count(A) DArray_end(A)  /* index + 1 = number of elements */
+#define DArray_end(A) ((A)->count)     /* index + 1 of last element of darray */
+#define DArray_count(A) DArray_count(A)/* index + 1 = number of elements */
 #define DArray_max(A) ((A)->max)       /* max number of elements */
+
 #define DEFAULT_EXPAND_RATE 64
 #define MAX_EXPAND_RATE 60000
 
+#define INV_DARRAY(array) { check((array), "received null pointer to darray");\
+    check((array)->contents, "received null pointer to darray content");\
+    assert(((array)->max && ((array)->max >= ((array))->count)) &&\
+	 "inconsistent array capacity");\
+}
+
 inline static int DArray_set(DArray *array, int i, void *el)
 {
-  check(array, "received null pointer to darray");
-  check(array->contents, "received null pointer to darray content");
-  assert((array->max && (array->max >= array->end)) && 
-	 "inconsistent array capacity");
-  
+  INV_DARRAY(array);
+
   /* allow darray to grow within capacity */
   check((i > -1 && i < array->max), "out-of-bound index for darray");
-  if (i >= array->end) array->end = i + 1;
+
+  if (i >= array->count) array->count = i + 1;
 
   if (!el) log_warn("received null pointer as content");
   array->contents[i] = el; /* dangerous, darray content not encapsulated */
@@ -60,11 +65,9 @@ inline static int DArray_set(DArray *array, int i, void *el)
 
 inline static void *DArray_get(DArray *array, int i)
 {
-  check(array, "received null pointer to darray");
-  check(array->contents, "received null pointer to darray content");
-  assert((array->max && (array->max >= array->end)) && 
-	 "inconsistent array capacity");
-  check((i > -1 && i < array->end), "out-of-bound index for darray");
+  INV_DARRAY(array);
+
+  check((i > -1 && i < array->count), "out-of-bound index for darray");
 
   return array->contents[i]; /* might be NULL */
 error:
@@ -74,32 +77,21 @@ error:
 static inline void *DArray_remove(DArray *array, int i)
 {
   void *el;
+  
+  INV_DARRAY(array);
 
-  check(array, "received null pointer to darray");
-  check(array->contents, "received null pointer to darray content"); 
-  assert((array->max && (array->max >= array->end)) && 
-	 "inconsistent array capacity");
-  check((i > -1 && i < array->end), "out-of-bound index for darray");
+  check((i > -1 && i < array->count), "out-of-bound index for darray");
 
-  if (!array->end) return NULL;  /* empty darray */
+  if (!array->count) return NULL;  /* empty darray */
 
   el = array->contents[i];  /* might be NULL */
   array->contents[i] = NULL;
 
-  if (i == array->end - 1) array->end--;
+  if (i == array->count - 1) array->count--;
 
   return el;
  error: 
   return NULL; 
-}
-
-static inline void *DArray_new(DArray *array)
-{
-  check(array->element_size > 0, "received nonpositive size for darray.");
-  
-  return calloc(1, array->element_size);
-error:
-  return NULL;
 }
 
 #define DArray_free(E) cfree((E))

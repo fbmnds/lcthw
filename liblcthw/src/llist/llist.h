@@ -1,11 +1,30 @@
 #ifndef LIST_H
 #define LIST_H
 
+#ifdef DTOR 
+/*
+  if user provides destructor for compound value types: 
+*/
+extern void (dtor_for_valuetype) (void *); 
+/*
+  then user provides this makro:
+#define DTOR(P) dtor_for_valuetype(P)
+*/
+#else
+#define DTOR(P) cfree(P)
+#endif
+
 typedef struct ListNode {
   struct ListNode *prev;
   struct ListNode *next;
   void * value;
 } ListNode;
+
+typedef struct List {
+  int count;
+  ListNode *first;
+  ListNode *last;
+} List;
 
 #define INV_COUNT_0(list) { assert((list)->count == 0);\
     assert((list)->first == NULL);\
@@ -28,29 +47,6 @@ typedef struct ListNode {
     assert((list)->last->prev != NULL);\
     assert((list)->last->next == NULL);\
 }
-
-
-
-#ifdef DTOR 
-/*
-  provide destructor for compound value types: 
-*/
-extern void (dtor_for_valuetype) (void *); 
-/*
-
-  provide this makro:
-#define DTOR(P) dtor_for_valuetype(P)
-*/
-#else
-#define DTOR(P) cfree(P)
-#endif
-
-
-typedef struct List {
-  int count;
-  ListNode *first;
-  ListNode *last;
-} List;
 
 List * List_create(void);
 /*

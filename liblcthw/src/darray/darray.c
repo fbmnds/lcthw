@@ -22,6 +22,7 @@ DArray *DArray_create(size_t element_size, size_t initial_max)
   ret->expand_rate = DEFAULT_EXPAND_RATE;
   ret->max = DEFAULT_EXPAND_RATE;
 
+  INV_DARRAY(ret);
   return ret;
  error:
   cfree(ret->contents);
@@ -79,12 +80,12 @@ int DArray_contract(DArray *array)
 
   check(array, "cannot contract on null pointer to darray");
   if (!array->contents)
-    assert(!array->end && "inconsistent darray length");
-  assert((array->max && (array->max >= array->end)) && 
+    assert(!array->count && "inconsistent darray length");
+  assert((array->max && (array->max >= array->count)) && 
 	 "inconsistent darray capacity");
 
   errno = 0;
-  array->max = array->end + DEFAULT_EXPAND_RATE;
+  array->max = array->count + DEFAULT_EXPAND_RATE;
   array->expand_rate = DEFAULT_EXPAND_RATE; 
   if (array->contents) {
     tmp = realloc(array->contents, array->max);
@@ -102,12 +103,12 @@ int DArray_contract(DArray *array)
 int DArray_push(DArray *array, void *el)
 {
   check(array, "received darray null pointer");
-  assert(array->end <= array->max && "inconsistent darray capacity");
+  assert(array->count <= array->max && "inconsistent darray capacity");
 
-  if (array->end == array->max) 
+  if (array->count == array->max) 
     check(!DArray_expand(&array), "expand of darray failed");
 
-  return DArray_set(array, array->end, el);
+  return DArray_set(array, array->count, el);
  error:
   return 1;
 }
@@ -116,7 +117,7 @@ void *DArray_pop(DArray *array)
 {
   check(array, "received darray null pointer");
 
-  return DArray_remove(array, array->end - 1);
+  return DArray_remove(array, array->count - 1);
  error: 
   return NULL;
 }

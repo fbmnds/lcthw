@@ -72,7 +72,7 @@ Index *bubble_sort(List *list, cmp_func *cmp)
 	if (cmp(listindex[i],listindex[j])) {
 	    tmp = listindex[i];
 	    listindex[i] = listindex[j];
-	    listindex[j] = tmp;
+ 	    listindex[j] = tmp;
 	  }
       }
     return listindex;
