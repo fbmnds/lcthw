@@ -136,14 +136,14 @@ void *test_create_index()
   return "create_index() failed";
 }
 
-void *test_bubble_sort()
+void *test_bubble_sort_list()
 {
   Index *idx;
 
-  printf("test_bubble_sort()\n");
-  printf("------------------\n");
+  printf("test_bubble_sort_list()\n");
+  printf("-----------------------\n");
 
-  check((listindex = bubble_sort(list, &cmp_TYPE_lt)), "listindex invalid");
+  check((listindex = bubble_sort_list(list, &cmp_TYPE_lt)), "listindex invalid");
   idx = listindex;
 
   for(int i = 0; i < list->count; idx++, i++)
@@ -153,17 +153,17 @@ void *test_bubble_sort()
   printf("(done.)\n");
   return NULL;
  error:
-  return "bubble_sort() failed";
+  return "bubble_sort_list() failed";
 }
 
-void *test_merge_sort()
+void *test_merge_sort_list()
 {
   Index *idx;
 
-  printf("test_merge_sort()\n");
-  printf("------------------\n");
+  printf("test_merge_sort_list()\n");
+  printf("----------------------\n");
 
-  check((listindex = merge_sort(list, &cmp_TYPE_lt)), "listindex invalid");
+  check((listindex = merge_sort_list(list, &cmp_TYPE_lt)), "listindex invalid");
   idx = listindex;
 
   for(int i = 0; i < list->count; idx++, i++)
@@ -173,7 +173,7 @@ void *test_merge_sort()
   printf("(done.)\n");
   return NULL;
  error:
-  return "merge_sort() failed";
+  return "merge_sort_list() failed";
 }
 
 void *all_tests()
@@ -198,8 +198,16 @@ void *all_tests()
   mu_run_test(test_list_push);
   mu_run_test(test_list_push);
   mu_run_test(test_create_index);
-  mu_run_test(test_merge_sort);
-  mu_run_test(test_merge_sort);
+  mu_run_test(test_bubble_sort_list);
+  mu_run_test(test_bubble_sort_list);
+  mu_run_test(test_list_destroy);
+  if (!list) printf("list is NULL after List_destroy()\n");
+  mu_run_test(test_list_push); /* push creates list, if necessary */
+  mu_run_test(test_list_push);
+  mu_run_test(test_list_push);
+  mu_run_test(test_create_index);
+  mu_run_test(test_merge_sort_list);
+  mu_run_test(test_merge_sort_list);
   mu_run_test(test_list_destroy);
   if (!list) printf("list is NULL after List_destroy()\n");
   NL;

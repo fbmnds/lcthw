@@ -21,10 +21,7 @@ void init_content()
 
 inline static void DArray_print(DArray *array)
 {
-  check(array, "received null pointer to darray");
-  check(array->contents, "received null pointer to darray content");
-  assert((array->max && (array->max >= array->count)) && 
-	 "inconsistent array capacity");
+  INV_DARRAY(array);
 
   for (int i = 0; i < array->count; i++) {
     printf("array[%d] = %d\n", i, *((int *)(array->contents[i])));
@@ -92,7 +89,9 @@ void *test_darray_pop()
   printf("-----------------\n");
   
   for (int i = 0; i < CONTLEN + 1; i++)
-    if (el = DArray_pop(array)) printf("popped *el = %d\n", *el);
+    if ((el = DArray_pop(array))) printf("popped *el = %d\n", *el);
+
+  INV_DARRAY(array);
 
   printf("print exhausted darray:\n");
   DArray_print(array);

@@ -46,14 +46,13 @@ int cmp_TYPE_lt(void *vp1, void *vp2)
   return -1;
 }
 
-Index *bubble_sort(List *list, cmp_func *cmp)
+Index *bubble_sort_list(List *list, cmp_func *cmp)
 {
   Index *listindex;
   TYPE *tmp;
 
   check(cmp, "compare function pointer is NULL");
   check(list, "received list nullpointer");
-  check(cmp, "received function nullpointer");
   assert(list->count >= 0);
   
   switch (list->count) {
@@ -133,7 +132,7 @@ static void merge_queues(Index *listindex,
   return;
 }
 
-Index *merge_sort(List *list, cmp_func *cmp)
+Index *merge_sort_list(List *list, cmp_func *cmp)
 {
   Index *listindex;
   Index *sortedlistindex;
@@ -143,7 +142,6 @@ Index *merge_sort(List *list, cmp_func *cmp)
 
   check(cmp, "compare function pointer is NULL");
   check(list, "received list nullpointer");
-  check(cmp, "received function nullpointer");
   assert(list->count >= 0);
   
   switch (list->count) {
