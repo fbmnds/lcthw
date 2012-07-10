@@ -85,6 +85,25 @@ void *test_darray_push()
   return "DArray_push failed";
 }
 
+void *test_darray_pop()
+{
+  int *el;
+  printf("test_darray_pop()\n");
+  printf("-----------------\n");
+  
+  for (int i = 0; i < CONTLEN + 1; i++)
+    if (el = DArray_pop(array)) printf("popped *el = %d\n", *el);
+
+  printf("print exhausted darray:\n");
+  DArray_print(array);
+
+  printf("(done.)\n");
+  return NULL;
+ error:
+  return "DArray_pop failed";
+}
+
+
 void *all_tests()
 {
   init_content();
@@ -96,10 +115,10 @@ void *all_tests()
   mu_run_test(test_darray_create);
   //mu_run_test(test_darray_clear); /* clear empty darray */
   mu_run_test(test_darray_push);
-#if 0
   mu_run_test(test_darray_pop);
   mu_run_test(test_darray_push);
   mu_run_test(test_darray_pop);
+#if 0
   mu_run_test(test_darray_pop);
   mu_run_test(test_darray_pop); /* pop until darray is exhausted */
   mu_run_test(test_darray_destroy); /* destroy exhausted darray */
