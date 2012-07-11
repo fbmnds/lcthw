@@ -1,4 +1,6 @@
 #include "darray/darray.h"
+#include "sort/sort.h"
+
 #include "misc/misc.h"
 #include "misc/dbg.h"
 #include "minunit.h"
@@ -102,6 +104,26 @@ void *test_darray_pop()
   return "DArray_pop failed";
 }
 
+void *test_bubble_sort()
+{
+  DArray *tmp;
+  printf("test_bubble_sort()\n");
+  printf("------------------\n");
+
+  
+  INV_DARRAY(array);
+  /* memory lead on array/tmp? */
+  tmp = (DArray *) bubble_sort((void **)array->contents, array->count, &cmp_TYPE_lt);
+  INV_DARRAY(array);
+
+  printf("print bubble-sorted darray:\n");
+  DArray_print(array);
+
+  printf("(done.)\n");
+  return NULL;
+ error:
+  return "bubble_sort(DArray) failed";
+}
 
 void *all_tests()
 {
@@ -117,20 +139,17 @@ void *all_tests()
   mu_run_test(test_darray_pop);
   mu_run_test(test_darray_push);
   mu_run_test(test_darray_pop);
-#if 0
   mu_run_test(test_darray_pop);
   mu_run_test(test_darray_pop); /* pop until darray is exhausted */
   mu_run_test(test_darray_destroy); /* destroy exhausted darray */
   if (array) return "array is not NULL after DArray_destroy()\n";
   mu_run_test(test_darray_destroy); /* destroy destroyed darray */
   if (array) return "array is not NULL after DArray_destroy()\n";
-  mu_run_test(test_darray_push); /* push creates darray, if necessary */
+  mu_run_test(test_darray_create); /* push does not create darray */
   mu_run_test(test_darray_push);
   mu_run_test(test_darray_push);
-  mu_run_test(test_create_index);
-  mu_run_test(test_merge_sort);
-  mu_run_test(test_merge_sort);
-#endif
+  mu_run_test(test_bubble_sort);
+  mu_run_test(test_bubble_sort);
   mu_run_test(test_darray_destroy);
   if (array) return "array is not NULL after DArray_destroy()\n";
   NL;

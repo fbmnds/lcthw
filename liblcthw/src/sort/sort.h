@@ -15,6 +15,15 @@ typedef int (cmp_func)(void *, void *);
 */
 cmp_func cmp_TYPE_lt;
 
+typedef int (cmp_pt_func)(void **, void **);
+/*
+ generic comparision for every TYPE that supports '<'
+ returns 1/0/-1 if arg1 </>= arg2/error
+*/
+cmp_pt_func cmp_pt_TYPE_lt;
+
 void * bubble_sort(void** index, int count, cmp_func* cmp);
+
+void * merge_sort(void** index, int count, cmp_func* cmp);
 
 #endif

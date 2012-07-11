@@ -60,64 +60,15 @@ Index *bubble_sort_list(List *list, cmp_func *cmp)
   return NULL;
 }
 
-
-static void merge_queues(Index *listindex, 
-			 Index **sortedlistindex, 
-			 int count,
-			 int idx1, int idx2,
-			 cmp_func *cmp)
-{
-  int length = idx2 - idx1;
-  int s1 = idx1 + length;
-  int s2 = idx2 + length;
-  int sortedidx = idx1;
-
-  check(cmp, "compare function pointer is NULL");
-  assert(length > 0);
-  assert(s1 < s2);
-
-  while ((sortedidx <= s2) && (sortedidx < count)) {
-    if ((idx1 < s1) && (idx2 < s2)) {
-      if (idx1 == count) break;
-      if (idx2 == count) {
-	for (; ((idx1 < count) && (sortedidx < count)); )
-	  (*sortedlistindex)[sortedidx++] = listindex[idx1++];
-	break;
-      }
-      if (cmp(listindex[idx1],listindex[idx2])) 
-	(*sortedlistindex)[sortedidx++] = listindex[idx1++];
-      else
-	(*sortedlistindex)[sortedidx++] = listindex[idx2++];
-    }
-    if (idx1 == s1) {
-      if ((sortedidx < count) && (idx2 < count))
-	(*sortedlistindex)[sortedidx++] = listindex[idx2++];
-    }
-    if (idx2 == s2) {
-      if ((sortedidx < count) && (idx1 < count))
-	(*sortedlistindex)[sortedidx++] = listindex[idx1++];
-    }
-  }
-
-  if (!((idx1 < count) && (idx2 < count) && (sortedidx < count)))
-    assert(((idx1 == s1) || (idx1 == count)) && 
-	   ((idx2 == s2) || (idx2 == count)) &&
-	   ((sortedidx == s2) || (sortedidx == count)));
-  assert(idx1 <= count);
-  assert(idx2 <= count);
-  assert(sortedidx <= count);
-
- error:
-  return;
-}
-
 Index *merge_sort_list(List *list, cmp_func *cmp)
 {
   Index *listindex;
   Index *sortedlistindex;
+#if 0
   Index *tmp;
   int idx1, idx2;
   int length;
+#endif
 
   check(cmp, "compare function pointer is NULL");
   check(list, "received list nullpointer");
@@ -133,6 +84,7 @@ Index *merge_sort_list(List *list, cmp_func *cmp)
   default:
     INV_COUNT_GT_1(list);
     check((listindex = create_index(list)), "create index failed");
+#if 0
     check_mem(sortedlistindex = calloc(list->count, sizeof(Index)));    
 
     /* init sortedlistindex */
@@ -155,6 +107,8 @@ Index *merge_sort_list(List *list, cmp_func *cmp)
       idx1 = 0;
       length *= 2;
     }
+#endif
+    sortedlistindex = (Index *) merge_sort((void **)listindex, list->count, cmp);
 
     cfree(listindex);
     return sortedlistindex;
