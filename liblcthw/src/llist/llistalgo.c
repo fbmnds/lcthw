@@ -14,10 +14,10 @@ Index *create_index(List* list)
   if (list->count < 0) sentinel("reveived invalid list count < 0");
   if (!list->count) sentinel("reveived empty list");
   
-  check_mem(listindex = calloc(list->count, sizeof(Index)));
+  check_mem((listindex = calloc(list->count, sizeof(Index))));
   
   if (list->count == 1)
-    *listindex = (TYPE *)list->first->value;
+    *listindex = (TYPE *) list->first->value;
   else { /* list->count > 1 */
     idx = listindex;
     LIST_FOREACH(list, first, next, iter)
@@ -29,27 +29,10 @@ Index *create_index(List* list)
   return NULL;
 }
 
-int cmp_TYPE_lt(void *vp1, void *vp2)
-{
-  int v1, v2;
-
-  if (!vp1) sentinel("received nullpointer to value 1");
-  if (!vp2) sentinel("received nullpointer to value 2");
-
-  v1 = *((TYPE *) vp1);
-  v2 = *((TYPE *) vp2);
-  if (v1 < v2)
-    return 1;
-  else
-    return 0;
- error:
-  return -1;
-}
-
 Index *bubble_sort_list(List *list, cmp_func *cmp)
 {
   Index *listindex;
-  TYPE *tmp;
+  /* TYPE *tmp; */
 
   check(cmp, "compare function pointer is NULL");
   check(list, "received list nullpointer");
@@ -66,14 +49,10 @@ Index *bubble_sort_list(List *list, cmp_func *cmp)
     INV_COUNT_GT_1(list);
     check((listindex = create_index(list)), "create index failed");
     
-    for (int i = 0; i < list->count; i++)
-      for (int j = 0; j < list->count - 1; j++) {
-	if (cmp(listindex[i],listindex[j])) {
-	    tmp = listindex[i];
-	    listindex[i] = listindex[j];
- 	    listindex[j] = tmp;
-	  }
-      }
+    check(listindex = 
+	  (Index *) bubble_sort((void**) listindex, list->count, cmp),
+	  "bubble sort failed");
+
     return listindex;
   }
 

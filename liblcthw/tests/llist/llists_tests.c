@@ -144,12 +144,12 @@ void *test_bubble_sort_list()
   printf("-----------------------\n");
 
   check((listindex = bubble_sort_list(list, &cmp_TYPE_lt)), "listindex invalid");
-  idx = listindex;
 
+  idx = (Index *) listindex;
   for(int i = 0; i < list->count; idx++, i++)
     printf("Index[%d] = %c\n", i, *((char *) *idx));
-
   cfree(listindex);
+
   printf("(done.)\n");
   return NULL;
  error:

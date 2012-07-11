@@ -1,6 +1,7 @@
 CFLAGS=-std=c99 -g -O2 -Wall -Wextra -Isrc -Itests -Lbuild -DNDEBUG $(OPTFLAGS)
 LIBS=-ldl $(OPTLIBS)
 PREFIX?=/usr/local
+SHELL=/bin/sh
 
 SOURCES=$(wildcard src/**/*.c src/*.c)
 OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
@@ -15,10 +16,12 @@ SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
 # the target build:
 all: clean $(TARGET) $(SO_TARGET) tests
 
-dev:CFLAGS=-std=c99 -g -Wall -Wextra -Isrc -Itests $(OPTFLAGS)
+dev:CFLAGS=-std=c99 -g -Wall -Wextra -Isrc -Itests -Lbuild $(OPTFLAGS)
 dev: all
 
+ifneq ($(shell echo $(OSTYPE)),cygwin)
 $(TARGET): CFLAGS += -fPIC
+endif
 $(TARGET): build $(OBJECTS)
 	ar rcs $@ $(OBJECTS)
 	ranlib $@
@@ -46,6 +49,8 @@ clean:
 	rm -f $(LOGS)
 	find . -name "*.gc*" -exec rm {} \; || echo
 	rm -rf `find . -name "*.dSYM" -print`
+	rm -rf `find . -name "*~" -print`
+	rm -rf `find . -name "*dump" -print`
 
 #the install:
 install: all
