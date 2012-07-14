@@ -106,15 +106,15 @@ void *test_darray_pop()
 
 void *test_bubble_sort()
 {
-  DArray *tmp;
+  void **tmp;
   printf("test_bubble_sort()\n");
   printf("------------------\n");
 
   
   INV_DARRAY(array);
-  /* memory lead on array/tmp? */
-  tmp = (DArray *) bubble_sort((void **)array->contents, array->count, &cmp_TYPE_lt);
+  tmp = bubble_sort((void **)array->contents, array->count, &cmp_TYPE_lt);
   INV_DARRAY(array);
+  assert(tmp == array->contents);
 
   printf("print bubble-sorted darray:\n");
   DArray_print(array);
@@ -123,6 +123,27 @@ void *test_bubble_sort()
   return NULL;
  error:
   return "bubble_sort(DArray) failed";
+}
+
+void *test_merge_sort()
+{
+  DArray *tmp;
+  printf("test_merge_sort()\n");
+  printf("-----------------\n");
+
+  
+  INV_DARRAY(array);
+  array->contents = (DArray *) merge_sort((void **)array->contents, array->count, &cmp_TYPE_lt);
+  INV_DARRAY(array);
+  //assert(tmp == array->contents);
+
+  printf("print merge-sorted darray:\n");
+  DArray_print(array);
+
+  printf("(done.)\n");
+  return NULL;
+ error:
+  return "merge_sort(DArray) failed";
 }
 
 void *all_tests()
@@ -150,6 +171,13 @@ void *all_tests()
   mu_run_test(test_darray_push);
   mu_run_test(test_bubble_sort);
   mu_run_test(test_bubble_sort);
+  mu_run_test(test_darray_destroy);
+  if (array) return "array is not NULL after DArray_destroy()\n";
+  mu_run_test(test_darray_create); /* push does not create darray */
+  mu_run_test(test_darray_push);
+  mu_run_test(test_darray_push);
+  mu_run_test(test_merge_sort);
+  mu_run_test(test_merge_sort);
   mu_run_test(test_darray_destroy);
   if (array) return "array is not NULL after DArray_destroy()\n";
   NL;

@@ -22,8 +22,8 @@ typedef int (cmp_pt_func)(void **, void **);
 */
 cmp_pt_func cmp_pt_TYPE_lt;
 
-void * bubble_sort(void** index, int count, cmp_func* cmp);
+void ** bubble_sort(void** index, int count, cmp_func* cmp);
 
-void * merge_sort(void** index, int count, cmp_func* cmp);
+void ** merge_sort(void** index, int count, cmp_func* cmp);
 
 #endif

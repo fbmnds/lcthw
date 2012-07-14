@@ -169,7 +169,7 @@ void *test_merge_sort_list()
   for(int i = 0; i < list->count; idx++, i++)
     printf("Index[%d] = %c\n", i, *((char *) *idx));
 
-  cfree(listindex);
+  //cfree(listindex);
   printf("(done.)\n");
   return NULL;
  error:
@@ -203,6 +203,8 @@ void *all_tests()
   mu_run_test(test_list_destroy);
   if (!list) printf("list is NULL after List_destroy()\n");
   mu_run_test(test_list_push); /* push creates list, if necessary */
+  mu_run_test(test_list_push);
+  mu_run_test(test_list_push);
   mu_run_test(test_list_push);
   mu_run_test(test_list_push);
   mu_run_test(test_create_index);

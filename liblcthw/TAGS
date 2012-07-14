@@ -1,0 +1,121 @@
+
+(null),488
+DArray *DArray_create(size_t element_size, size_t initial_max)DArray_create8,106
+void DArray_destroy(DArray *array)DArray_destroy33,718
+void DArray_clear(DArray *array)DArray_clear43,855
+int DArray_expand(DArray *array)DArray_expand49,919
+int DArray_contract(DArray *array)DArray_contract71,1415
+int DArray_push(DArray *array, void *el)DArray_push77,1483
+void *DArray_pop(DArray *array)DArray_pop85,1571
+void DArray_clear_destroy(DArray *array)DArray_clear_destroy94,1728
+
+src/darray/darray.h,1044
+#define _DArray_h _DArray_h2,19
+typedef struct DArray { DArray9,125
+  int end;              /* index + 1 of last element of darray */end10,150
+  int max;              /* max number of elements, always > 0 */max11,216
+  size_t element_size;  /* size of a content element */element_size12,281
+  size_t expand_rate;expand_rate13,337
+  void **contents;contents14,359
+} DArray;DArray15,378
+#define DArray_last(DArray_last33,719
+#define DArray_first(DArray_first34,772
+#define DArray_end(DArray_end35,815
+#define DArray_count(DArray_count36,896
+#define DArray_max(DArray_max37,972
+#define DEFAULT_EXPAND_RATE DEFAULT_EXPAND_RATE38,1040
+#define MAX_EXPAND_RATE MAX_EXPAND_RATE39,1071
+inline static int DArray_set(DArray *array, int i, void *el)DArray_set41,1102
+inline static void *DArray_get(DArray *array, int i)DArray_get60,1707
+static inline void *DArray_remove(DArray *array, int i)DArray_remove73,2118
+static inline void *DArray_new(DArray *array)DArray_new95,2685
+#define DArray_free(DArray_free104,2877
+
+src/llist/llist.c,417
+List * List_create(void)List_create8,107
+int List_destroy(List **lst)List_destroy13,171
+int List_clear(List *list)List_clear49,788
+int List_push(List **lst, void *value)List_push75,1218
+void *List_pop(List *list)List_pop115,2026
+int List_shift(List *list, void *value)List_shift155,2797
+void *List_unshift(List *list)List_unshift162,2885
+int List_remove(List* list, ListNode *node)List_remove168,2951
+
+src/llist/llist.h,646
+#define LIST_HLIST_H2,15
+typedef struct ListNode {ListNode4,31
+  struct ListNode *prev;prev5,57
+  struct ListNode *next;next6,82
+  void * value;value7,107
+} ListNode;ListNode8,123
+#define INV_COUNT_0(INV_COUNT_010,136
+#define INV_COUNT_1(INV_COUNT_115,269
+#define INV_COUNT_GT_1(INV_COUNT_GT_122,485
+#define DTOR(DTOR32,812
+typedef struct List {List41,955
+  int count;count42,977
+  ListNode *first;first43,990
+  ListNode *last;last44,1009
+} List;List45,1027
+#define List_count(List_count57,1186
+#define List_first(List_first58,1221
+#define List_last(List_last59,1256
+#define LIST_FOREACH(LIST_FOREACH78,1577
+
+src/llist/llistalgo.c,303
+Index *create_index(List* list)create_index8,110
+int cmp_TYPE_lt(void *vp1, void *vp2)cmp_TYPE_lt32,673
+Index *bubble_sort(List *list, cmp_func *cmp)bubble_sort49,965
+static void merge_queues(Index *listindex, merge_queues86,1750
+Index *merge_sort(List *list, cmp_func *cmp)merge_sort136,3103
+
+src/llist/llistalgo.h,232
+#define LIST_ALGOS_HLIST_ALGOS_H2,21
+typedef int TYPE; /* generic value TYPE, e.g. int */TYPE6,63
+typedef TYPE *Index;Index7,116
+typedef int (cmp_func)(void *, void *);cmp_func15,257
+cmp_func cmp_TYPE_lt;cmp_TYPE_lt19,343
+
+,366
+#define __dbg_h____dbg_h__2,18
+#define debug(debug9,110
+#define debug(debug11,138
+#define clean_errno(clean_errno14,243
+#define log_err(log_err16,306
+#define log_warn(log_warn18,435
+#define log_info(log_info20,564
+#define check(check22,667
+#define sentinel(sentinel24,754
+#define check_mem(check_mem26,833
+#define check_debug(check_debug28,884
+
+src/misc/misc.h,138
+#define LCTHW_MISC_HLCTHW_MISC_H2,21
+#define cfree(cfree6,64
+#define NL NL7,125
+#define inlineinline9,150
+#define MIN(MIN11,166
+
+,634
+static List *list;list12,184
+static char *values[] = { "1ONE", "2TWO", "3THREE", "4FOUR", "5FIVE", NULL };values13,203
+static Index * listindex;listindex14,281
+void *test_list_create()test_list_create16,308
+void *test_list_destroy()test_list_destroy34,696
+void *test_list_clear()test_list_clear49,968
+void *test_list_push()test_list_push65,1226
+void *test_list_pop()test_list_pop89,1692
+void *test_create_index()test_create_index119,2320
+void *test_bubble_sort()test_bubble_sort139,2721
+void *test_merge_sort()test_merge_sort159,3131
+void *all_tests()all_tests179,3537
+RUN_TESTS(all_tests);all_tests210,4629
+
+zzlz9n8n5z5cwp92dcxs5n0w0000gn/T//tags.5LtDb2,250
+#undef NDEBUGNDEBUG1,0
+#define _minunit_h_minunit_h4,34
+#define mu_suite_start(mu_suite_start11,117
+#define mu_assert(mu_assert13,164
+#define mu_run_test(mu_run_test15,249
+#define RUN_TESTS(RUN_TESTS18,373
+int tests_run;tests_run33,800
