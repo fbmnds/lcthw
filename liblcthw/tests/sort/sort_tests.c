@@ -12,7 +12,7 @@
 int array_3[] = {2, 2, 0};
 int array_4[] = {2, 1, 0, 3};
 int array_5[] = {2, 1, 0, 0, 1};
-int array_6[] = {2, 1, 0, 2, 0, 1};
+int array_6[] = {2, 1, 2, 1, 0, 0};
 int array_7[] = {2, 1, 0, 2, 0, 3, 1};
 int array_8[] = {2, 1, 0, 2, 0, 3, 1, 3};
 int array_9[] = {4, 2, 1, 0, 2, 0, 3, 1, 3};
@@ -58,10 +58,10 @@ int cmp_int_lt(void *vp1, void *vp2)
   */
 }
 
-inline static void array_print(int *array, int count)
+inline static void array_print(int *array, size_t count)
 {
-  for (int i = 0; i < count; i++)
-    printf("array[%d] = %d\n", i, array[i]);
+  for (size_t i = 0; i < count; i++)
+    printf("array[%ld] = %d\n", i, array[i]);
   return;
 }
 
@@ -69,8 +69,8 @@ inline static void DArray_print(DArray *array)
 {
   INV_DARRAY(array);
 
-  for (int i = 0; i < array->count; i++) {
-    printf("array[%d] = %d\n", i, *((int *)(array->contents[i])));
+  for (size_t i = 0; i < array->count; i++) {
+    printf("array[%ld] = %d\n", i, *((int *)(array->contents[i])));
   }
 
  error: /* fallthrough */

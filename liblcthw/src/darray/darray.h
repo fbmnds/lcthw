@@ -8,8 +8,8 @@
 #include "misc/dbg.h"
 
 typedef struct DArray { 
-  int count;            /* equals index + 1 of last element of darray */
-  int max;              /* max number of elements, always > 0 */
+  size_t count;            /* equals index + 1 of last element of darray */
+  size_t max;              /* max number of elements, always > 0 */
   size_t element_size;  /* size of a content element */
   size_t expand_rate;
   void **contents;
@@ -46,12 +46,12 @@ void DArray_clear_destroy(DArray *array);
 	 "inconsistent array capacity");\
 }
 
-inline static int DArray_set(DArray *array, int i, void *el)
+inline static int DArray_set(DArray *array, size_t i, void *el)
 {
   INV_DARRAY(array);
 
   /* allow darray to grow within capacity */
-  check((i > -1 && i < array->max), "out-of-bound index for darray");
+  check((i >= 0 && i < array->max), "out-of-bound index for darray");
 
   if (i >= array->count) array->count = i + 1;
 
@@ -63,24 +63,24 @@ inline static int DArray_set(DArray *array, int i, void *el)
   return 1; 
 }
 
-inline static void *DArray_get(DArray *array, int i)
+inline static void *DArray_get(DArray *array, size_t i)
 {
   INV_DARRAY(array);
 
-  check((i > -1 && i < array->count), "out-of-bound index for darray");
+  check((i >= 0 && i < array->count), "out-of-bound index for darray");
 
   return array->contents[i]; /* might be NULL */
 error:
   return NULL; 
 }
 
-static inline void *DArray_remove(DArray *array, int i)
+static inline void *DArray_remove(DArray *array, size_t i)
 {
   void *el;
   
   INV_DARRAY(array);
 
-  check((i > -1 && i < array->count), "out-of-bound index for darray");
+  check((i >= 0 && i < array->count), "out-of-bound index for darray");
 
   if (!array->count) return NULL;  /* empty darray */
 

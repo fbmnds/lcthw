@@ -10,23 +10,49 @@
 #include <assert.h>
 
 static DArray* array;
-#define CONTLEN 65
+#define CONTLEN 67
 static int *content[CONTLEN];
 
-void init_content()
+void content_init()
 {
-  for (int i = 0; i < CONTLEN; i++) {
+  for (size_t i = 0; i < CONTLEN; i++) {
     content[i] = malloc(sizeof(int*));
     *(content[i]) = i;
   }
+}
+
+/*
+  return 1/0/-1 on equal/not/equal/error
+*/
+int content_equal(DArray *array1, DArray *array2)
+{
+  INV_DARRAY(array1);
+  INV_DARRAY(array2);
+
+  if (array1->count != array2->count) {
+    printf("darrays differ in length\n");
+    goto nonequal;
+  } 
+
+  for (size_t i = 0; i < array1->count; i++)
+    if (*(int *)array1->contents[i] != *(int *)array2->contents[i]) {
+      printf("darrays differ at position [%ld]\n", i);
+      goto nonequal;
+    }
+
+  return 1;
+ nonequal:
+  return 0;
+ error:
+  return -1;
 }
 
 inline static void DArray_print(DArray *array)
 {
   INV_DARRAY(array);
 
-  for (int i = 0; i < array->count; i++) {
-    printf("array[%d] = %d\n", i, *((int *)(array->contents[i])));
+  for (size_t i = 0; i < array->count; i++) {
+    printf("array[%ld] = %d\n", i, *((int *)(array->contents[i])));
   }
 
  error: /* fallthrough */
@@ -71,7 +97,7 @@ void *test_darray_push()
   printf("test_darray_push()\n");
   printf("------------------\n");
   
-  for (int i = 0; i < CONTLEN; i++) {
+  for (size_t i = 0; i < CONTLEN; i++) {
     rc = DArray_push(array, content[i]);
     check(!rc, "DArray_push return code = %d", rc);
   }
@@ -90,7 +116,7 @@ void *test_darray_pop()
   printf("test_darray_pop()\n");
   printf("-----------------\n");
   
-  for (int i = 0; i < CONTLEN + 1; i++)
+  for (size_t i = 0; i < CONTLEN + 1; i++)
     if ((el = DArray_pop(array))) printf("popped *el = %d\n", *el);
 
   INV_DARRAY(array);
@@ -127,27 +153,42 @@ void *test_bubble_sort()
 
 void *test_merge_sort()
 {
+  DArray *result;
+
   printf("test_merge_sort()\n");
   printf("-----------------\n");
 
+  INV_DARRAY(array);
+  result = DArray_create(array->element_size, array->max);
+  check_mem(result);
+
+  for (size_t i = 0; i < array->count; i++)
+    result->contents[i] = array->contents[i];
+  result->max = array->max;
+  result->count = array->count;
+  result->expand_rate = array->expand_rate;
+  INV_DARRAY(result);
+
+  result->contents = bubble_sort(result->contents, result->count, &cmp_TYPE_lt);
+  INV_DARRAY(result);
   
   INV_DARRAY(array);
   array->contents = merge_sort(array->contents, array->count, &cmp_TYPE_lt);
   INV_DARRAY(array);
-  //assert(tmp == array->contents);
-
-  printf("print merge-sorted darray:\n");
-  DArray_print(array);
+  
+  check(content_equal(array, result), "bubble sort and merge sort results differ");
 
   printf("(done.)\n");
   return NULL;
  error:
+  printf("print failed merge-sorted darray:\n");
+  DArray_print(array);
   return "merge_sort(DArray) failed";
 }
 
 void *all_tests()
 {
-  init_content();
+  content_init();
   mu_suite_start();
   mu_run_test(test_darray_create);
   mu_run_test(test_darray_destroy);

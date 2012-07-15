@@ -20,7 +20,8 @@ DArray *DArray_create(size_t element_size, size_t initial_max)
 
   ret->element_size = element_size;
   ret->expand_rate = DEFAULT_EXPAND_RATE;
-  ret->max = DEFAULT_EXPAND_RATE;
+  ret->max = initial_max;
+  ret->count = 0; /* being explicit */
 
   INV_DARRAY(ret);
   return ret;
