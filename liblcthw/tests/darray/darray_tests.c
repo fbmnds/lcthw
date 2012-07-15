@@ -127,13 +127,12 @@ void *test_bubble_sort()
 
 void *test_merge_sort()
 {
-  DArray *tmp;
   printf("test_merge_sort()\n");
   printf("-----------------\n");
 
   
   INV_DARRAY(array);
-  array->contents = (DArray *) merge_sort((void **)array->contents, array->count, &cmp_TYPE_lt);
+  array->contents = merge_sort(array->contents, array->count, &cmp_TYPE_lt);
   INV_DARRAY(array);
   //assert(tmp == array->contents);
 
@@ -174,6 +173,8 @@ void *all_tests()
   mu_run_test(test_darray_destroy);
   if (array) return "array is not NULL after DArray_destroy()\n";
   mu_run_test(test_darray_create); /* push does not create darray */
+  mu_run_test(test_darray_push);
+  mu_run_test(test_darray_push);
   mu_run_test(test_darray_push);
   mu_run_test(test_darray_push);
   mu_run_test(test_merge_sort);

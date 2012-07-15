@@ -71,15 +71,15 @@ static int merge_queues(void **index,
   int s2 = idx2 + length;
   int sortedidx = idx1;
 
-  printf("enter merge_queues\n");
+  //printf("enter merge_queues\n");
   check(cmp, "compare function pointer is NULL");
   assert(length > 0);
   assert(s1 < s2);
 
   if (s2 > count) s2 = count;
   while (sortedidx < s2) {
-    printf("idx1= %d, s1 = %d, idx2 = %d, s2 = %d\n",idx1,s1,idx2,s2);
-    printf("sortedidx = %d\n", sortedidx);
+    //printf("idx1= %d, s1 = %d, idx2 = %d, s2 = %d\n",idx1,s1,idx2,s2);
+    //printf("sortedidx = %d\n", sortedidx);
     if ((idx1 < s1) && (idx2 < s2))
       if (cmp(index[idx1], index[idx2])) { 
     	sortedindex[sortedidx++] = index[idx1++];
@@ -99,7 +99,7 @@ static int merge_queues(void **index,
       break;
     }
   }
-  printf("leave merge_queues\n");
+  //printf("leave merge_queues\n");
   return 0;
  error:
   return 1;
@@ -158,20 +158,27 @@ void **merge_sort(void **index, int count, cmp_func* cmp)
     next:
 	//printf("idx1 after 1 = %d\n\n",idx1);
   	idx1 += 2*length;
-	NL;
-	//	for (int i = 0; i < count; i++)
+	//NL;
+	//for (int i = 0; i < count; i++)
 	//  printf("index = %d, sortedindex = %d\n",*(int*)index[i],*(int*)sortedindex[i]);
     }
     //printf("idx1 after 2 = %d\n",idx1);
     idx1 = 0;
     length *= 2;
-	for (int i = 0; i < count; i++)
-	  printf("index = %d, sortedindex = %d\n",*(int*)index[i],*(int*)sortedindex[i]);
+    //for (int i = 0; i < count; i++)
+    //   printf("index = %d, sortedindex = %d\n",*(int*)index[i],*(int*)sortedindex[i]);
 
   }
-  NL;	for (int i = 0; i < count; i++)
-	  printf("index = %d, sortedindex = %d\n",*(int*)index[i],*(int*)sortedindex[i]);
+  //NL;	for (int i = 0; i < count; i++)
+  //  printf("index = %d, sortedindex = %d\n",*(int*)index[i],*(int*)sortedindex[i]);
   
+  if (count%4 == 2 && count > 4) {
+    /* clean up last 4 elements */
+    idx1 = count - 4;
+    idx2 = count - 2;
+    check((!merge_queues(sortedindex, index, count, idx1, idx2, cmp)), "merge_queues() failed");
+  }
+
   return sortedindex;
  error:
   cfree(sortedindex);
