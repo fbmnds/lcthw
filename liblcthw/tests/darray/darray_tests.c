@@ -52,7 +52,7 @@ inline static void DArray_print(DArray *array)
   INV_DARRAY(array);
 
   for (size_t i = 0; i < array->count; i++) {
-    printf("array[%ld] = %d\n", i, *((int *)(array->contents[i])));
+    fprintf(stderr, "array[%ld] = %d\n", i, *((int *)(array->contents[i])));
   }
 
  error: /* fallthrough */
@@ -117,7 +117,7 @@ void *test_darray_pop()
   printf("-----------------\n");
   
   for (size_t i = 0; i < CONTLEN + 1; i++)
-    if ((el = DArray_pop(array))) printf("popped *el = %d\n", *el);
+    if ((el = DArray_pop(array))) fprintf(stderr, "popped *el = %d\n", *el);
 
   INV_DARRAY(array);
 
@@ -142,7 +142,7 @@ void *test_bubble_sort()
   INV_DARRAY(array);
   assert(tmp == array->contents);
 
-  printf("print bubble-sorted darray:\n");
+  fprintf(stderr, "print bubble-sorted darray:\n");
   DArray_print(array);
 
   printf("(done.)\n");

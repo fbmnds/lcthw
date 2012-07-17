@@ -75,7 +75,7 @@ void *test_list_push()
   }
 
   LIST_FOREACH(list, first, next, iter) {
-    printf("after push %s \n", (char *) iter->value);
+    fprintf(stderr, "after push %s \n", (char *) iter->value);
     //    check((!strcmp(iter->value, *(--vp))), "strcmp failed");
   }
   NL;
@@ -104,7 +104,7 @@ void *test_list_pop()
   cfree(value);
 
   LIST_FOREACH(list, first, next, iter) {
-    printf("after pop: %s\n", (char *) iter->value);
+    fprintf(stderr, "after pop: %s\n", (char *) iter->value);
   }
   NL;
   
@@ -127,7 +127,7 @@ void *test_create_index()
   idx = listindex;
 
   for(int i = 0; i < list->count; idx++, i++)
-    printf("Index[%d] = %c\n", i, *((char *) *idx));
+    fprintf(stderr, "Index[%d] = %c\n", i, *((char *) *idx));
 
   cfree(listindex);
   printf("(done.)\n");
@@ -147,7 +147,7 @@ void *test_bubble_sort_list()
 
   idx = (Index *) listindex;
   for(int i = 0; i < list->count; idx++, i++)
-    printf("Index[%d] = %c\n", i, *((char *) *idx));
+    fprintf(stderr, "Index[%d] = %c\n", i, *((char *) *idx));
   cfree(listindex);
 
   printf("(done.)\n");
@@ -167,7 +167,7 @@ void *test_merge_sort_list()
   idx = (Index *) listindex;
 
   for(int i = 0; i < list->count; idx++, i++)
-    printf("Index[%d] = %c\n", i, *((char *) *idx));
+    fprintf(stderr, "Index[%d] = %c\n", i, *((char *) *idx));
   cfree(listindex);
 
   printf("(done.)\n");
