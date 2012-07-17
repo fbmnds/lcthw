@@ -4,10 +4,15 @@ echo "Running unit tests:"
 
 if test $OSTYPE = "cygwin"
 then
-PATH=$PATH:build
-EXECS=tests/*/*_tests.exe
+    PATH=$PATH:build
+    EXECS=tests/*/*_tests.exe
 else
-EXECS=tests/*/*_tests
+    EXECS=tests/*/*_tests
+    VALGRIND=`which valgrind`
+    if  ! test -x $VALGRIND
+    then
+	VALGRIND=
+    fi
 fi
 
 for i in $EXECS
@@ -25,6 +30,8 @@ do
 	fi
     fi
 done
+
+grep "==" tests/tests.log
 
 echo "(unit tests done.)"
 echo 
