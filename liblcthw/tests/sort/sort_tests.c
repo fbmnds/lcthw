@@ -32,9 +32,9 @@ int res_array_11[] = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5};
 /*
   return 1 if equal/not equal
  */
-inline static int array_equal(DArray *array1, int *array2, int count)
+inline static int array_equal(DArray *array1, int *array2, size_t count)
 {
-  for (int i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++)
     if (*(int *)(array1->contents[i]) != array2[i]) goto not_equal;
   
   return 1;
@@ -77,30 +77,40 @@ inline static void DArray_print(DArray *array)
   return;
 }
 
-DArray *init_darray(int *array, int count)
+DArray *darray_init(int *array, size_t count)
 {
-  DArray *darray = DArray_create(sizeof(int*), (size_t) count);
+  DArray *darray = DArray_create(sizeof(int*), count);
 
   INV_DARRAY(darray);
-
-  for (int i = 0; i < count; i++)
-    darray->contents[i] = array + i;
+  
+  for (size_t i = 0; i < count; i++)
+    darray->contents[i] = &array[i];
   darray->count = count;
 
-  return darray;
+  INV_DARRAY(darray);
+ 
+ return darray;
  error:
   return NULL;
 }
 
 void *test_merge_sort_3()
 {
-  DArray *darray = init_darray(array_3, 3);
+  DArray *darray = darray_init(array_3, 3);
+  void **result;
 
   printf("test_merge_sort_3()\n");
   printf("-------------------\n");
 
-  darray->contents = (void **) merge_sort((void **)darray->contents, 3, &cmp_TYPE_lt);
+  result = merge_sort(darray->contents, 3, &cmp_TYPE_lt);
+  cfree(darray->contents);
+  darray->contents = result;
   check(array_equal(darray, res_array_3, 3), "array_3 result mismatch");
+
+  INV_DARRAY(darray);
+
+  cfree(darray->contents);
+  cfree(darray);
 
   printf("(done.)\n");
   return NULL;
@@ -112,13 +122,18 @@ void *test_merge_sort_3()
 
 void *test_merge_sort_4()
 {
-  DArray *darray = init_darray(array_4, 4);
+  DArray *darray = darray_init(array_4, 4);
 
   printf("test_merge_sort_4()\n");
   printf("-------------------\n");
 
-  darray->contents = (void **) merge_sort((void **)darray->contents, 4, &cmp_TYPE_lt);
+  darray->contents = merge_sort(darray->contents, 4, &cmp_TYPE_lt);
   check(array_equal(darray, res_array_4, 4), "array_4 result mismatch");
+
+  INV_DARRAY(darray);
+
+  cfree(darray->contents);
+  cfree(darray);
 
   printf("(done.)\n");
   return NULL;
@@ -130,13 +145,18 @@ void *test_merge_sort_4()
 
 void *test_merge_sort_5()
 {
-  DArray *darray = init_darray(array_5, 5);
+  DArray *darray = darray_init(array_5, 5);
 
   printf("test_merge_sort_5()\n");
   printf("-------------------\n");
 
-  darray->contents = (void **) merge_sort((void **)darray->contents, 5, &cmp_TYPE_lt);
+  darray->contents = merge_sort(darray->contents, 5, &cmp_TYPE_lt);
   check(array_equal(darray, res_array_5, 5), "array_5 result mismatch");
+
+  INV_DARRAY(darray);
+
+  cfree(darray->contents);
+  cfree(darray);
 
   printf("(done.)\n");
   return NULL;
@@ -148,13 +168,18 @@ void *test_merge_sort_5()
 
 void *test_merge_sort_6()
 {
-  DArray *darray = init_darray(array_6, 6);
+  DArray *darray = darray_init(array_6, 6);
 
   printf("test_merge_sort_6()\n");
   printf("-------------------\n");
 
-  darray->contents = (void **) merge_sort((void **)darray->contents, 6, &cmp_TYPE_lt);
+  darray->contents = merge_sort(darray->contents, 6, &cmp_TYPE_lt);
   check(array_equal(darray, res_array_6, 6), "array_6 result mismatch");
+
+  INV_DARRAY(darray);
+
+  cfree(darray->contents);
+  cfree(darray);
 
   printf("(done.)\n");
   return NULL;
@@ -166,13 +191,18 @@ void *test_merge_sort_6()
 
 void *test_merge_sort_7()
 {
-  DArray *darray = init_darray(array_7, 7);
+  DArray *darray = darray_init(array_7, 7);
 
   printf("test_merge_sort_7()\n");
   printf("-------------------\n");
 
-  darray->contents = (void **) merge_sort((void **)darray->contents, 7, &cmp_TYPE_lt);
+  darray->contents = merge_sort(darray->contents, 7, &cmp_TYPE_lt);
   check(array_equal(darray, res_array_7, 7), "array_7 result mismatch");
+
+  INV_DARRAY(darray);
+
+  cfree(darray->contents);
+  cfree(darray);
 
   printf("(done.)\n");
   return NULL;
@@ -184,13 +214,18 @@ void *test_merge_sort_7()
 
 void *test_merge_sort_8()
 {
-  DArray *darray = init_darray(array_8, 8);
+  DArray *darray = darray_init(array_8, 8);
 
   printf("test_merge_sort_8()\n");
   printf("-------------------\n");
 
-  darray->contents = (void **) merge_sort((void **)darray->contents, 8, &cmp_TYPE_lt);
+  darray->contents = merge_sort(darray->contents, 8, &cmp_TYPE_lt);
   check(array_equal(darray, res_array_8, 8), "array_8 result mismatch");
+
+  INV_DARRAY(darray);
+
+  cfree(darray->contents);
+  cfree(darray);
 
   printf("(done.)\n");
   return NULL;
@@ -202,13 +237,18 @@ void *test_merge_sort_8()
 
 void *test_merge_sort_9()
 {
-  DArray *darray = init_darray(array_9, 9);
+  DArray *darray = darray_init(array_9, 9);
 
   printf("test_merge_sort_9()\n");
   printf("-------------------\n");
 
-  darray->contents = (void **) merge_sort((void **)darray->contents, 9, &cmp_TYPE_lt);
+  darray->contents = merge_sort(darray->contents, 9, &cmp_TYPE_lt);
   check(array_equal(darray, res_array_9, 9), "array_9 result mismatch");
+
+  INV_DARRAY(darray);
+
+  cfree(darray->contents);
+  cfree(darray);
 
   printf("(done.)\n");
   return NULL;
@@ -220,13 +260,18 @@ void *test_merge_sort_9()
 
 void *test_merge_sort_10()
 {
-  DArray *darray = init_darray(array_10, 10);
+  DArray *darray = darray_init(array_10, 10);
 
   printf("test_merge_sort_10()\n");
-  printf("-------------------\n");
+  printf("--------------------\n");
 
-  darray->contents = (void **) merge_sort((void **)darray->contents, 10, &cmp_TYPE_lt);
+  darray->contents = merge_sort(darray->contents, 10, &cmp_TYPE_lt);
   check(array_equal(darray, res_array_10, 10), "array_10 result mismatch");
+
+  INV_DARRAY(darray);
+
+  cfree(darray->contents);
+  cfree(darray);
 
   printf("(done.)\n");
   return NULL;
@@ -238,13 +283,18 @@ void *test_merge_sort_10()
 
 void *test_merge_sort_11()
 {
-  DArray *darray = init_darray(array_11, 11);
+  DArray *darray = darray_init(array_11, 11);
 
   printf("test_merge_sort_11()\n");
   printf("-------------------\n");
 
-  darray->contents = (void **) merge_sort((void **)darray->contents, 11, &cmp_TYPE_lt);
+  darray->contents = merge_sort(darray->contents, 11, &cmp_TYPE_lt);
   check(array_equal(darray, res_array_11, 11), "array_11 result mismatch");
+
+  INV_DARRAY(darray);
+
+  cfree(darray->contents);
+  cfree(darray);
 
   printf("(done.)\n");
   return NULL;

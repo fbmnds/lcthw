@@ -9,13 +9,13 @@ DArray *DArray_create(size_t element_size, size_t initial_max)
 {
   DArray *ret = NULL;
 
-  check ((element_size >= 0), "invalid negative element size");
+  check ((element_size > 0), "invalid zero or negative element size");
   check ((initial_max > 0), "invalid zero or negative initial array capacity");
 
   ret = calloc(1, sizeof(DArray));
   check_mem(ret);
 
-  ret->contents = calloc(initial_max, sizeof(void*));
+  ret->contents = calloc(initial_max, element_size);
   check_mem(ret->contents);
 
   ret->element_size = element_size;

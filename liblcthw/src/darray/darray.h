@@ -79,7 +79,7 @@ static inline void *DArray_remove(DArray *array, size_t i)
   void *el;
   
   INV_DARRAY(array);
-
+  
   check((i >= 0 && i < array->count), "out-of-bound index for darray");
 
   if (!array->count) return NULL;  /* empty darray */

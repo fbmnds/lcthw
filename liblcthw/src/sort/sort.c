@@ -129,6 +129,7 @@ void **merge_sort(void **index, int count, cmp_func* cmp)
   
   idx1 = 0;
   length = 1;
+  swaps = 0;
   while (length < count) {
     /* swap between sortedindex and index for memory efficiency */
     swaps++;
