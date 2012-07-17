@@ -94,32 +94,44 @@ DArray *darray_init(int *array, size_t count)
   return NULL;
 }
 
-void *test_merge_sort_3()
-{
-  DArray *darray = darray_init(array_3, 3);
-  void **result;
-
-  printf("test_merge_sort_3()\n");
-  printf("-------------------\n");
-
-  result = merge_sort(darray->contents, 3, &cmp_TYPE_lt);
-  cfree(darray->contents);
-  darray->contents = result;
-  check(array_equal(darray, res_array_3, 3), "array_3 result mismatch");
-
-  INV_DARRAY(darray);
-
-  cfree(darray->contents);
-  cfree(darray);
-
-  printf("(done.)\n");
-  return NULL;
- error:
-  printf("print merge-sorted failed result:\n");
-  DArray_print(darray);
-  return "test_merge_sort_3() failed";
+#define TEST_MERGE_SORT(IDX) void *test_merge_sort_ ## IDX ()\
+{\
+  DArray *darray = darray_init(array_ ## IDX, IDX);\
+  void **result;\
+\
+  printf("test_merge_sort_" #IDX "()\n");\
+  printf("-------------------\n");\
+\
+  result = merge_sort(darray->contents, IDX, &cmp_TYPE_lt);\
+  cfree(darray->contents);\
+  darray->contents = result;\
+  check(array_equal(darray, res_array_ ## IDX, IDX), "array_" #IDX " result mismatch");\
+\
+  INV_DARRAY(darray);\
+\
+  cfree(darray->contents);\
+  cfree(darray);\
+\
+  printf("(done.)\n");\
+  return NULL;\
+ error:\
+  printf("print merge-sorted failed result:\n");\
+  DArray_print(darray);\
+  return "test_merge_sort_" #IDX "() failed";\
 }
 
+
+TEST_MERGE_SORT(3);
+TEST_MERGE_SORT(4);
+TEST_MERGE_SORT(5);
+TEST_MERGE_SORT(6);
+TEST_MERGE_SORT(7);
+TEST_MERGE_SORT(8);
+TEST_MERGE_SORT(9);
+TEST_MERGE_SORT(10);
+TEST_MERGE_SORT(11);
+
+#if 0
 void *test_merge_sort_4()
 {
   DArray *darray = darray_init(array_4, 4);
@@ -303,6 +315,7 @@ void *test_merge_sort_11()
   DArray_print(darray);
   return "test_merge_sort_11() failed";
 }
+#endif
 
 void *all_tests()
 {
