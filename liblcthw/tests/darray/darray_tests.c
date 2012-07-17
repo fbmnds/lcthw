@@ -154,6 +154,8 @@ void *test_bubble_sort()
 void *test_merge_sort()
 {
   DArray *result;
+  void **result_contents;
+  void **tmp;
 
   printf("test_merge_sort()\n");
   printf("-----------------\n");
@@ -173,10 +175,16 @@ void *test_merge_sort()
   INV_DARRAY(result);
   
   INV_DARRAY(array);
-  array->contents = merge_sort(array->contents, array->count, &cmp_TYPE_lt);
+  tmp = array->contents;
+  result_contents = merge_sort(array->contents, array->count, &cmp_TYPE_lt);
+  array->contents = result_contents;
   INV_DARRAY(array);
   
   check(content_equal(array, result), "bubble sort and merge sort results differ");
+  cfree(result_contents);
+  array->contents = tmp;
+
+  DArray_destroy(&result);
 
   printf("(done.)\n");
   return NULL;
