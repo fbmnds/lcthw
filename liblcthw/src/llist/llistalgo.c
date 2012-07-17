@@ -13,8 +13,8 @@ Index *create_index(List* list)
   if (!list) sentinel("received nullpointer to list");
   if (list->count < 0) sentinel("reveived invalid list count < 0");
   if (!list->count) sentinel("reveived empty list");
-  
-  check_mem((listindex = calloc(list->count, sizeof(Index))));
+
+  check_mem((listindex = calloc(list->count, sizeof(TYPE *))));
   
   if (list->count == 1)
     *listindex = (TYPE *) list->first->value;

@@ -115,6 +115,7 @@ void **merge_sort(void **index, int count, cmp_func* cmp)
   void **tmp;
   int idx1, idx2;
   int length;
+  int swaps;
 
   check(count, "received negative element count");
   /* rely on valid index */
@@ -130,6 +131,7 @@ void **merge_sort(void **index, int count, cmp_func* cmp)
   length = 1;
   while (length < count) {
     /* swap between sortedindex and index for memory efficiency */
+    swaps++;
     tmp = index;
     index = sortedindex;
     sortedindex = tmp;
@@ -137,19 +139,19 @@ void **merge_sort(void **index, int count, cmp_func* cmp)
     while (idx1 < count) {
   	idx2 = idx1 + length;
   	if (CASE_I) {
-	  printf("CASE I\n");
+	  //printf("CASE I\n");
 	  check((!merge_queues(index, sortedindex, count, idx1, idx2, cmp)), "merge_queues() failed"); 
 	  goto next;
 	}
   	if (CASE_II) {
-	  printf("CASE II\n");
+	  //printf("CASE II\n");
 	  assert((idx1 - length) >= 0);
 	  if (length) break;
 	  check((!merge_queues(index, sortedindex, count, idx1 - length, idx1, cmp)), "merge_queues() failed"); 
 	  break;
 	}
   	if (CASE_III) {
-	  printf("CASE III\n");
+	  //printf("CASE III\n");
 	  //assert((idx1 - length) >= 0);
 	  check((!merge_queues(index, sortedindex, count, idx1, idx2, cmp)), "merge_queues() failed"); 
 	  break;
@@ -177,6 +179,15 @@ void **merge_sort(void **index, int count, cmp_func* cmp)
     idx1 = count - 4;
     idx2 = count - 2;
     check((!merge_queues(sortedindex, index, count, idx1, idx2, cmp)), "merge_queues() failed");
+  }
+
+  /* swap back, if necessary, i.e. odd number of swaps */
+  if (swaps%2 == 1) {
+    tmp = index;
+    index = sortedindex;
+    sortedindex = tmp;
+    for (int i = 0; i < count; i++)
+      sortedindex[i] = index[i];
   }
 
   return sortedindex;

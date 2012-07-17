@@ -164,12 +164,12 @@ void *test_merge_sort_list()
   printf("----------------------\n");
 
   check((listindex = merge_sort_list(list, &cmp_TYPE_lt)), "listindex invalid");
-  idx = listindex;
+  idx = (Index *) listindex;
 
   for(int i = 0; i < list->count; idx++, i++)
     printf("Index[%d] = %c\n", i, *((char *) *idx));
+  cfree(listindex);
 
-  //cfree(listindex);
   printf("(done.)\n");
   return NULL;
  error:
@@ -199,6 +199,7 @@ void *all_tests()
   mu_run_test(test_list_push);
   mu_run_test(test_create_index);
   mu_run_test(test_bubble_sort_list);
+  //mu_run_test(test_create_index);
   mu_run_test(test_bubble_sort_list);
   mu_run_test(test_list_destroy);
   if (!list) printf("list is NULL after List_destroy()\n");
