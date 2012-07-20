@@ -11,7 +11,7 @@
 
 static List *list;
 static char *values[] = { "1ONE", "2TWO", "3THREE", "4FOUR", "5FIVE", NULL };
-static Index * listindex;
+static DArray *listindex;
 
 void *test_list_create()
 {
@@ -116,20 +116,17 @@ void *test_list_pop()
   return "List_pop failed";
 }
 
-void *test_create_index()
+void *test_create_destroy_index()
 {
-  Index *idx;
-
   printf("test_create_index()\n");
   printf("-------------------\n");
 
   check((listindex = create_index(list)), "listindex invalid");
-  idx = listindex;
+  
+  for(size_t i = 0; i < list->count; i++)
+    fprintf(stderr, "Index[%ld] = %c\n", i, *((char *) DArray_get(listindex,i)));
+  DArray_destroy(&listindex);
 
-  for(int i = 0; i < list->count; idx++, i++)
-    fprintf(stderr, "Index[%d] = %c\n", i, *((char *) *idx));
-
-  cfree(listindex);
   printf("(done.)\n");
   return NULL;
  error:
@@ -138,17 +135,16 @@ void *test_create_index()
 
 void *test_bubble_sort_list()
 {
-  Index *idx;
-
   printf("test_bubble_sort_list()\n");
   printf("-----------------------\n");
 
   check((listindex = bubble_sort_list(list, &cmp_TYPE_lt)), "listindex invalid");
+  INV_DARRAY(listindex);
 
-  idx = (Index *) listindex;
-  for(int i = 0; i < list->count; idx++, i++)
-    fprintf(stderr, "Index[%d] = %c\n", i, *((char *) *idx));
-  cfree(listindex);
+  for(size_t i = 0; i < list->count; i++)
+    fprintf(stderr, "Index[%ld] = %c\n", i, *((char *) DArray_get(listindex,i)));
+
+  DArray_destroy(&listindex);
 
   printf("(done.)\n");
   return NULL;
@@ -158,17 +154,16 @@ void *test_bubble_sort_list()
 
 void *test_merge_sort_list()
 {
-  Index *idx;
-
   printf("test_merge_sort_list()\n");
   printf("----------------------\n");
 
   check((listindex = merge_sort_list(list, &cmp_TYPE_lt)), "listindex invalid");
-  idx = (Index *) listindex;
+  INV_DARRAY(listindex);
 
-  for(int i = 0; i < list->count; idx++, i++)
-    fprintf(stderr, "Index[%d] = %c\n", i, *((char *) *idx));
-  cfree(listindex);
+  for(size_t i = 0; i < list->count; i++)
+    fprintf(stderr, "Index[%ld] = %c\n", i, *((char *) DArray_get(listindex,i)));
+
+  DArray_destroy(&listindex);
 
   printf("(done.)\n");
   return NULL;
@@ -197,9 +192,11 @@ void *all_tests()
   mu_run_test(test_list_push); /* push creates list, if necessary */
   mu_run_test(test_list_push);
   mu_run_test(test_list_push);
-  mu_run_test(test_create_index);
+  mu_run_test(test_create_destroy_index);
+  if (!listindex) printf("listindex is NULL after List_destroy()\n");
   mu_run_test(test_bubble_sort_list);
-  //mu_run_test(test_create_index);
+  mu_run_test(test_create_destroy_index);
+  if (!listindex) printf("listindex is NULL after List_destroy()\n");
   mu_run_test(test_bubble_sort_list);
   mu_run_test(test_list_destroy);
   if (!list) printf("list is NULL after List_destroy()\n");
@@ -208,8 +205,11 @@ void *all_tests()
   mu_run_test(test_list_push);
   mu_run_test(test_list_push);
   mu_run_test(test_list_push);
-  mu_run_test(test_create_index);
+  mu_run_test(test_create_destroy_index);
+  if (!listindex) printf("listindex is NULL after List_destroy()\n");
   mu_run_test(test_merge_sort_list);
+  mu_run_test(test_create_destroy_index);
+  if (!listindex) printf("listindex is NULL after List_destroy()\n");
   mu_run_test(test_merge_sort_list);
   mu_run_test(test_list_destroy);
   if (!list) printf("list is NULL after List_destroy()\n");

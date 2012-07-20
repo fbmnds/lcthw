@@ -1,6 +1,8 @@
 #ifndef LIST_H
 #define LIST_H
 
+#include <stdlib.h>
+
 #ifdef DTOR 
 /*
   if user provides destructor for compound value types: 
@@ -21,7 +23,7 @@ typedef struct ListNode {
 } ListNode;
 
 typedef struct List {
-  int count;
+  size_t count;
   ListNode *first;
   ListNode *last;
 } List;

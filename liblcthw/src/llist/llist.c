@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stdlib.h>
 
 #include "llist.h"
 #include "misc/misc.h"
@@ -66,7 +65,7 @@ int List_clear(List *list)
   assert(list);
   /* assert(!list->first); */
   /* assert(!list->last); */
-  debug("list->count = %d\n", list->count);
+  debug("list->count = %ld\n", list->count);
   assert(list->count == 0);
 
   return 0;
