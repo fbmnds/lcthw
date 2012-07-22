@@ -13,7 +13,7 @@
 /*~~~~~~~~~~~~~~~~	sample B+tree parametrization	~~~~~~~~~~~~~~~*/
 				/* causes printing of node information */
 #define DEBUG 1
-#undef DEBUG
+/* #undef DEBUG */
 				/* pointer vs. array representation of nodes */
 #define POINTER 1
 				/* 24 bytes is minimal size for 2-3 trees */
