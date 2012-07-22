@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#define cfree(p) if ((p) != NULL) { free((p)); (p) = NULL; }
+#define cfree(p) if ((p) != NULL) { free((void *)(p)); (p) = NULL; }
 #define NL printf("\n")
 
 #define inline

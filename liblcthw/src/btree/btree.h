@@ -48,7 +48,7 @@
 #define LOWER	-3
 
 
-/*/*~~~~~~~~~~~~~~~~~~~~~~~~	node pointer and key type	~~~~~~~*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~	node pointer and key type	~~~~~~~*/
 #ifdef POINTER
 typedef struct node	*Nptr;	/* streamlined pointer representation */
 #else
@@ -100,7 +100,7 @@ typedef struct dupdata {
 } DupData;
 
 
-/*/*~~~~~~~~~~~~~~~~~~~~~~~~	structured tree node	~~~~~~~~~~~~~~~*\
+/*~~~~~~~~~~~~~~~~~~~~~~~~	structured tree node	~~~~~~~~~~~~~~~*\
 |
 |	The structures Entry, Inner and Leaf are all identical in size.
 |	Each node is of size:  fanout * sizeof(Entry).  Through the
@@ -141,7 +141,7 @@ typedef struct node {
 } Node;
 
 
-/*/*~~~~~~~~~~~~~~~~~~~~~~~~	key comparison function type	~~~~~~~*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~	key comparison function type	~~~~~~~*/
 typedef int (*KeyCmp)(keyT, keyT);
 
 

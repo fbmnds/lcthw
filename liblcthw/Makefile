@@ -51,6 +51,7 @@ clean:
 	rm -rf `find . -name "*.dSYM" -print`
 	rm -rf `find . -name "*~" -print`
 	rm -rf `find . -name "*dump" -print`
+	gtags
 
 #the install:
 install: all

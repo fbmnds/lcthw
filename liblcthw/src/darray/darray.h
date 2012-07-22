@@ -46,7 +46,7 @@ void DArray_clear_destroy(DArray *array);
 	 "inconsistent array capacity");\
 }
 
-inline static int DArray_set(DArray *array, size_t i, void *el)
+static inline int DArray_set(DArray *array, size_t i, void *el)
 {
   INV_DARRAY(array);
 

@@ -121,7 +121,7 @@
 #define getnodenumber(v) ((v) - nodearrayhead)
 
 
-/*/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
 |	Sample Key Comparison Function					|
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -182,7 +182,7 @@ void freeBtree(Tree *B)
 }
 
 
-/*/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
 |	Find location for data						|
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -243,7 +243,7 @@ int getSlot(Tree *B, Nptr curr)
 }
 
 
-/*/*~~~~~~~~~~~~~~~~~~~   recursive binary search   ~~~~~~~~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~~~~~~~~~   recursive binary search   ~~~~~~~~~~~~~~~~~~~~~*/
 int findKey(Tree *B, Nptr curr, int lo, int hi)
 {
   int mid, findslot;
@@ -283,7 +283,7 @@ int findKey(Tree *B, Nptr curr, int lo, int hi)
 }
 
 
-/*/*~~~~~~~~~~~   comparison of key with a target key slot   ~~~~~~~~~~~~*/
+/*~~~~~~~~~~~   comparison of key with a target key slot   ~~~~~~~~~~~~*/
 int bestMatch(Tree *B, Nptr curr, int slot)
 {
   int diff, comp, findslot;
@@ -321,7 +321,7 @@ int bestMatch(Tree *B, Nptr curr, int slot)
 }
 
 
-/*/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
 |	Insert new data into tree					|
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -383,7 +383,7 @@ Nptr descendSplit(Tree *B, Nptr curr)
   return newNode;
 }
 
-/*/*~~~~~~~~~~~~~~   determine location of inserted key   ~~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~~~~   determine location of inserted key   ~~~~~~~~~~~~~~~*/
 void insertEntry(Tree *B, Nptr newNode, int slot, Nptr sibling, Nptr downPtr)
 {
   int split, i, j, k, x, y;
@@ -441,7 +441,7 @@ void insertEntry(Tree *B, Nptr newNode, int slot, Nptr sibling, Nptr downPtr)
   }
 }
 
-/*/*~~~~~~~~~~~   place key into appropriate node & slot   ~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~   place key into appropriate node & slot   ~~~~~~~~~~~~~~*/
 void placeEntry(Tree *B, Nptr newNode, int slot, Nptr downPtr)
 {
   int x;
@@ -493,7 +493,7 @@ void makeNewRoot(Tree *B, Nptr oldRoot, Nptr newNode)
 }
 
 
-/*/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
 |	Delete data from tree						|
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -555,7 +555,7 @@ void collapseRoot(Tree *B, Nptr oldRoot, Nptr newRoot)
 }
 
 
-/*/*~~~~~~~~~~~~~~~   recurse down and balance back up   ~~~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~~~~~   recurse down and balance back up   ~~~~~~~~~~~~~~~~*/
 Nptr descendBalance(Tree *B, Nptr curr, Nptr left, Nptr right, Nptr lAnc, Nptr rAnc, Nptr parent)
 {
   Nptr	newMe, myLeft, myRight, lAnchor, rAnchor, newNode;
@@ -615,7 +615,7 @@ Nptr descendBalance(Tree *B, Nptr curr, Nptr left, Nptr right, Nptr lAnc, Nptr r
 |
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-/*			/* begin deletion, working upwards from leaves */
+			/* begin deletion, working upwards from leaves */
 
   if (newMe != NONODE)	/* this node removal doesn't consider duplicates */
     removeEntry(B, curr, slot + (newMe != newNode));	/* removes one of two */
@@ -669,7 +669,7 @@ Nptr descendBalance(Tree *B, Nptr curr, Nptr left, Nptr right, Nptr lAnc, Nptr r
 }
 
 
-/*/*~~~~~~~~~~~~~~~   remove key and pointer from node   ~~~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~~~~~   remove key and pointer from node   ~~~~~~~~~~~~~~~~*/
 void removeEntry(Tree *B, Nptr curr, int slot)
 {
   int x;
@@ -724,7 +724,7 @@ Nptr merge(Tree *B, Nptr left, Nptr right, Nptr anchor)
 }
 
 
-/*/*~~~~~   shift entries in a node pair & adjust anchor key value   ~~~~*/
+/*~~~~~   shift entries in a node pair & adjust anchor key value   ~~~~*/
 Nptr shift(Tree *B, Nptr left, Nptr right, Nptr anchor)
 {
   int	i, x, y, z;
@@ -800,7 +800,7 @@ Nptr shift(Tree *B, Nptr left, Nptr right, Nptr anchor)
 }
 
 
-/*/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
 |	Empty Node Utilities						|
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -862,7 +862,7 @@ Nptr getDataNode(Tree *B, keyT key)		/* can add data parameter */
 }
 
 
-/*/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*\
 |	B+tree Printing Utilities					|
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
