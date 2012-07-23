@@ -40,8 +40,6 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~	constants	~~~~~~~~~~~~~~~~~~~~~~~*/
 			/* ARRAY is a place holder value for:  fanout */
 #define ARRAY	1
-			/* corresponds to a NULL node pointer value */
-#define NONODE	(nodearrayhead - 1)
 			/* special node slot values used in key search */
 #define ERROR	-1
 #define UPPER	-2
@@ -182,8 +180,8 @@ void	listAllBtreeValues(Tree *B);
 int	compareKeys(keyT key1, keyT key2);
 
 Nptr	search(Tree *B, keyT key);
-void	insert(Tree *B, keyT key);
-void	delete(Tree *B, keyT key);
+int	insert(Tree *B, keyT key);
+int	delete(Tree *B, keyT key);
 
 #endif
 

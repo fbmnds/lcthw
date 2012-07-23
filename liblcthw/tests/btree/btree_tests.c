@@ -47,8 +47,7 @@ void *test_btree_1()
   insert(Bplus,1);
 
   for (i = 1; i < 17; i++)
-    (void) search(Bplus, i);
-
+    fprintf(stderr, "search(Bplus, i = %d) = %x\n", i, search(Bplus, i));
 
   delete(Bplus,17);
   delete(Bplus,2);
@@ -60,7 +59,8 @@ void *test_btree_1()
   delete(Bplus,8);
 
   for (i = 1; i < 17; i++)
-    (void) search(Bplus, i);
+    fprintf(stderr, "search(Bplus, i = %d) = %x\n", i, search(Bplus, i));
+  NL;
   listAllBtreeValues(Bplus);
 
   delete(Bplus,9);
@@ -97,7 +97,7 @@ void *test_btree_2()
 
   for (i = 0; i < 48; i++) {
     j = rand() >> 3 & 255;
-    if (search(Bplus, j) == Bplus->tree - 1) {
+    if (!search(Bplus, j)) {
       insert(Bplus, j);
       fprintf(stderr, "XXX %d, insert %d XXX\n", i, j);
     }
@@ -109,7 +109,7 @@ void *test_btree_2()
       listAllBtreeValues(Bplus);
   }
   for (i = 0; i < 256; i++)
-    (void) search(Bplus, i);
+    fprintf(stderr, "search(Bplus, i = %d) = %x\n", i, search(Bplus, i));
   listAllBtreeValues(Bplus);
   freeBtree(Bplus);
 

@@ -27,6 +27,10 @@
 #define nodearrayhead 0
 #endif
 
+                        /* corresponds to a NULL node pointer value */
+                        /* only internal, as bound to btree named 'B' */
+#define NONODE	(nodearrayhead - 1)
+
 			/* access keys and pointers in a node */
 #define getkey(j, q) nAdr(j).e[(q)].key
 #define getnode(j, q) nAdr(j).e[(q)].downNode
@@ -140,9 +144,9 @@ int compareKeys(keyT key1, keyT key2)
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /*~~~~~~~~~~~~~~~~~~~~~~   private functions   ~~~~~~~~~~~~~~~~~~~~~~~~*/
-void initFreeNodePool(Tree *B, int quantity);
+int initFreeNodePool(Tree *B, int quantity);
 Nptr getFreeNode(Tree *B);
-void putFreeNode(Tree *B, Nptr self);
+int putFreeNode(Tree *B, Nptr self);
 
 /*~~~~~~~~~~~~~~~~~~~   Set up B+tree structure   ~~~~~~~~~~~~~~~~~~~~~*/
 Tree *initBtree(unsigned int poolsz, unsigned int fan, KeyCmp keyCmp)
@@ -154,11 +158,13 @@ Tree *initBtree(unsigned int poolsz, unsigned int fan, KeyCmp keyCmp)
   check(fan > 1, "fan < 2 invalid");
 
   setbplustree(malloc(sizeof(Tree)));
+  check_mem(B);
+
   setfanout(fan);
   setminfanout((fan + 1) >> 1);
-  initFreeNodePool(B, poolsz);
+  check(!initFreeNodePool(B, poolsz), "initBtree free node pool failed");
 
-  setleaf(getFreeNode(B));		/* set up the first leaf node */
+  check_mem(setleaf(getFreeNode(B)));   /* set up the first leaf node */
   setroot(getleaf);			/* the root is initially the leaf */
   setflag(getroot, isLEAF);
   setflag(getroot, isROOT);
@@ -220,7 +226,7 @@ Nptr search(Tree *B, keyT key)
   fprintf(stderr, "SEARCH:  found on page %ld.\n", getnodenumber(findNode));
 #endif
 
-  return findNode;
+  return findNode == NONODE ? NULL : findNode;
  error:
   return NULL;
 }
@@ -276,8 +282,7 @@ int findKey(Tree *B, Nptr curr, int lo, int hi)
   check(curr, "findKey received curr null pointer");
   check(lo <= hi, "findKey received invalid boundaries (lo = %d > hi = %d)",
 	lo, hi);
-  if (lo < 0) 
-    log_info("findey received negative boundary lo = %d (hi = %d)", lo, hi);
+  check(lo > -1, "findKey received negative boundary lo = %d (hi = %d)", lo, hi);
 
 #ifdef DEBUG
   fprintf(stderr, "GETSLOT:  lo %d, hi %d.\n", lo, hi);
@@ -287,11 +292,10 @@ int findKey(Tree *B, Nptr curr, int lo, int hi)
   if (hi == lo) {
     findslot = bestMatch(B, curr, lo);		/* recursion base case */
 
-#ifdef DEBUG
-    if (findslot == ERROR)
+    if (findslot == ERROR) {
       fprintf(stderr, "Bad key ordering on node %ld\n", getnodenumber(curr));
-#endif
-
+      goto error;
+    }
   }
   else {
     mid = (lo + hi) >> 1;
@@ -302,12 +306,15 @@ int findKey(Tree *B, Nptr curr, int lo, int hi)
     case UPPER:				/* check upper half of range */
       findslot = findKey(B, curr, mid + 1, hi);
     break;
-
-#ifdef DEBUG
     case ERROR:
       fprintf(stderr, "Bad key ordering on node %ld\n", getnodenumber(curr));
+      break;
+    default:
+#ifdef DEBUG
+      fprintf(stderr, "findKey switch defaults on findslot = %d\n", findslot);
+#else
+      ;
 #endif
-
     }
   }
   return findslot;
@@ -331,10 +338,8 @@ int bestMatch(Tree *B, Nptr curr, int slot)
 		((comp = comparekeys(getfunkey, getkey(curr, slot - 1))) >= 0))
       findslot = slot - 1;
 
-#ifdef DEBUG
     else if (comp < diff)
       findslot = ERROR;		/* inconsistent ordering of keys */
-#endif
 
     else
       findslot = LOWER;		/* key must be below in node ordering */
@@ -343,13 +348,12 @@ int bestMatch(Tree *B, Nptr curr, int slot)
     if ((slot == numentries(curr)) ||
 		((comp = comparekeys(getfunkey, getkey(curr, slot + 1))) < 0))
       findslot = slot;
+
     else if (comp == 0)
       findslot = slot + 1;
 
-#ifdef DEBUG
     else if (comp > diff)
       findslot = ERROR;		/* inconsistent ordering of keys */
-#endif
 
     else
       findslot = UPPER;		/* key must be above in node ordering */
@@ -370,10 +374,10 @@ Nptr descendSplit(Tree *B, Nptr curr);
 void insertEntry(Tree *B, Nptr node, int slot, Nptr sibling, Nptr downPtr);
 void placeEntry(Tree *B, Nptr node, int slot, Nptr downPtr);
 Nptr split(Tree *B, Nptr node);
-void makeNewRoot(Tree *B, Nptr oldRoot, Nptr newNode);
+int makeNewRoot(Tree *B, Nptr oldRoot, Nptr newNode);
 
 /*~~~~~~~~~~~~~~~~~~~~~   top level insert call   ~~~~~~~~~~~~~~~~~~~~~*/
-void insert(Tree *B, keyT key)
+int insert(Tree *B, keyT key)
 {
   Nptr newNode;
 
@@ -388,11 +392,11 @@ void insert(Tree *B, keyT key)
   setsplitpath(NONODE);
   newNode = descendSplit(B, getroot);	/* insertion point search from root */
   if (newNode != getsplitpath)		/* indicates the root node has split */
-    makeNewRoot(B, getroot, newNode);
-  return;
+    return makeNewRoot(B, getroot, newNode);
+  return 0;
  error:
   fprintf(stderr, "insert failed\n");
-  return;
+  return 1;
 }
 
 
@@ -553,13 +557,14 @@ Nptr split(Tree *B, Nptr newNode)
 
 
 /*~~~~~~~~~~~~~~~~~~~~~   build new root node   ~~~~~~~~~~~~~~~~~~~~~~~*/
-void makeNewRoot(Tree *B, Nptr oldRoot, Nptr newNode)
+int makeNewRoot(Tree *B, Nptr oldRoot, Nptr newNode)
 {
   check(B, "makeNewRoot received Btree null pointer");
   check(newNode, "makeNewRoot received newNode null pointer");
   check(oldRoot, "makeNewRoot received oldRoot null pointer");
 
   setroot(getFreeNode(B));
+  check_mem(getroot);
 
   setfirstnode(getroot, oldRoot);	/* old root becomes new root's child */
   setentry(getroot, 1, getfunkey, newNode);	/* old root's sibling also */
@@ -570,10 +575,10 @@ void makeNewRoot(Tree *B, Nptr oldRoot, Nptr newNode)
   setflag(getroot, FEWEST);
   inctreeheight;
 
-  return;
+  return 0;
  error:
   fprintf(stderr, "makeNewRoot failed\n");
-  return;
+  return 1;
 }
 
 
@@ -583,8 +588,8 @@ void makeNewRoot(Tree *B, Nptr oldRoot, Nptr newNode)
 
 /*~~~~~~~~~~~~~~~~~~~~~~   private functions   ~~~~~~~~~~~~~~~~~~~~~~~~*/
 Nptr descendBalance(Tree *B, Nptr curr, Nptr left, Nptr right, Nptr lAnc, Nptr rAnc, Nptr parent);
-void collapseRoot(Tree *B, Nptr oldRoot, Nptr newRoot);
-void removeEntry(Tree *B, Nptr curr, int slot);
+int collapseRoot(Tree *B, Nptr oldRoot, Nptr newRoot);
+int removeEntry(Tree *B, Nptr curr, int slot);
 Nptr merge(Tree *B, Nptr left, Nptr right, Nptr anchor);
 Nptr shift(Tree *B, Nptr left, Nptr right, Nptr anchor);
 
@@ -606,7 +611,7 @@ Nptr shift(Tree *B, Nptr left, Nptr right, Nptr anchor);
 |	and minimize the need for non-local key manipulation.
 |
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-void delete(Tree *B, keyT key)
+int delete(Tree *B, keyT key)
 {
   Nptr newNode;
 
@@ -619,17 +624,17 @@ void delete(Tree *B, keyT key)
   setfunkey(key);			/* set deletion key */
   setmergepath(NONODE);
   newNode = descendBalance(B, getroot, NONODE, NONODE, NONODE, NONODE, NONODE);
-  if (isnode(newNode))
-    collapseRoot(B, getroot, newNode);	/* remove root when superfluous */
-  return;
+  if (isnode(newNode))                  /* remove root when superfluous */
+    return collapseRoot(B, getroot, newNode);
+  return 0;
  error:
   fprintf(stderr, "delete failed\n");
-  return;
+  return 1;
 }
 
 
 /*~~~~~~~~~~~~~~~~~~~~~   remove old root node   ~~~~~~~~~~~~~~~~~~~~~~*/
-void collapseRoot(Tree *B, Nptr oldRoot, Nptr newRoot)
+int collapseRoot(Tree *B, Nptr oldRoot, Nptr newRoot)
 {
   check(B, "collapseRoot received Btree null pointer");
   check(newRoot, "collapseRoot received newRoot null pointer");
@@ -646,10 +651,10 @@ void collapseRoot(Tree *B, Nptr oldRoot, Nptr newRoot)
   setflag(newRoot, isROOT);
   putFreeNode(B, oldRoot);
   dectreeheight;			/* the height of the tree decreases */
-  return;
+  return 0;
  error:
   fprintf(stderr, "collapseRoot failed\n");
-  return;
+  return 1;
 }
 
 
@@ -658,28 +663,23 @@ Nptr descendBalance(Tree *B, Nptr curr, Nptr left, Nptr right, Nptr lAnc, Nptr r
 {
   Nptr	newMe, myLeft, myRight, lAnchor, rAnchor, newNode;
   int	slot, notleft, notright, fewleft, fewright, test;
-  int   INIT_OK = 1;
 
-  check(B, "descendBallance received Btree null pointer");
-  check(curr, "descendBallance received curr null pointer"); 
-  check(left, "descendBallance received left null pointer");
-  check(right, "descendBallance received right null pointer");
-  check(lAnc, "descendBallance received lAnc null pointer");
-  check(rAnc, "descendBallance received rAnc null pointer");
-  check(parent, "descendBallance received parent null pointer");
+  check(B, "descendBalance received Btree null pointer");
+  check(curr, "descendBalance received curr null pointer"); 
+  check(left, "descendBalance received left null pointer");
+  check(right, "descendBalance received right null pointer");
+  check(lAnc, "descendBalance received lAnc null pointer");
+  check(rAnc, "descendBalance received rAnc null pointer");
+  check(parent, "descendBalance received parent null pointer");
+
+  check(curr != NONODE, "descendBalance received NONODE as curr");
 
   if (!isfew(curr))
     setmergepath(NONODE);
-  else if (getmergepath == NONODE)
+  else if (getmergepath == NONODE) 
     setmergepath(curr);		/* mark which nodes may need rebalancing */
-
-  if ((getmergepath != curr) && (getmergepath != NONODE)) {
-    fprintf(stderr, "may not properly initialized: getmergepath = %x\n", 
-	    getmergepath);
-    fprintf(stderr, "curr = %x, NONODE = %x\n", curr, NONODE);
-    INIT_OK = 0;
-  }
-  fprintf(stderr, " INIT_OK = %d\n", INIT_OK);
+  /* else */
+    /* use previously set node as merge path */
 
   slot = getSlot(B, curr);
   newNode = getnode(curr, slot);
@@ -708,10 +708,6 @@ Nptr descendBalance(Tree *B, Nptr curr, Nptr left, Nptr right, Nptr lAnc, Nptr r
     newMe = NONODE;		/* no deletion possible, key not found */
     setmergepath(NONODE);
   }
-
-  if (!INIT_OK && getmergepath != NONODE)
-    fprintf(stderr, "!INIT_OK && getmergepath = %x != NONODE, curr = %x\n", 
-	    getmergepath, curr);
 
 /*~~~~~~~~~~~~~~~~   rebalancing tree after deletion   ~~~~~~~~~~~~~~~~*\
 |
@@ -747,11 +743,20 @@ Nptr descendBalance(Tree *B, Nptr curr, Nptr left, Nptr right, Nptr lAnc, Nptr r
   if (getmergepath == NONODE)
     newNode = NONODE;
   else {		/* tree rebalancing rules for node merges and shifts */
-    notleft = isntnode(left);
-    notright = isntnode(right);
-    fewleft = isfew(left);		/* only used when defined */
-    fewright = isfew(right);
-
+    if (left == NONODE) {
+      notleft = 1;
+      fewleft = 0;
+    } else {
+      notleft = isntnode(left);
+      fewleft = isfew(left);		/* only used when defined */
+    }
+    if (right == NONODE) {
+      notright = 1;
+      fewright = 0;
+    } else {
+      notright = isntnode(right);
+      fewright = isfew(right);
+    }
 			/* CASE 1:  prepare root node (curr) for removal */
     if (notleft && notright) {
       test = isleaf(curr);		/* check if B+tree has become empty */
@@ -791,16 +796,18 @@ Nptr descendBalance(Tree *B, Nptr curr, Nptr left, Nptr right, Nptr lAnc, Nptr r
 
 
 /*~~~~~~~~~~~~~~~   remove key and pointer from node   ~~~~~~~~~~~~~~~~*/
-void removeEntry(Tree *B, Nptr curr, int slot)
+int removeEntry(Tree *B, Nptr curr, int slot)
 {
   int x;
 
   check(B, "removeEntry received Btree null pointer");
   check(curr, "removeEntry received curr null pointer");
+  check(curr != NONODE, "removeEntry received NONODE for curr");
   check(slot > -1, "removeEntry received invalid negative slot");
 
-
-  putFreeNode(B, getnode(curr, slot));	/* return deleted node to free list */
+                                       /* return deleted node to free list */
+  check(!putFreeNode(B, getnode(curr, slot)), 
+	"removeEntry could not return deleted node to free list");  
   for (x = slot; x < numentries(curr); x++)
     pullentry(curr, x, 1);		/* adjust node with removed key */
   decentries(curr);
@@ -812,10 +819,10 @@ void removeEntry(Tree *B, Nptr curr, int slot)
   else if (numentries(curr) == getminfanout(curr))
     setflag(curr, FEWEST);
 
-  return;
+  return 0;
  error:
   fprintf(stderr, "removeEntry failed\n");
-  return;
+  return 1;
 }
 
 
@@ -835,6 +842,10 @@ Nptr merge(Tree *B, Nptr left, Nptr right, Nptr anchor)
   showNode(B, left);
   showNode(B, right);
 #endif
+
+  check(left != NONODE, "merge: left is NONODE");
+  check(right != NONODE, "merge: right is NONODE");
+  check(anchor != NONODE, "merge: anchor is NONODE");
 
   if (isinternal(left)) {
     incentries(left);			/* copy key separating the nodes */
@@ -878,6 +889,10 @@ Nptr shift(Tree *B, Nptr left, Nptr right, Nptr anchor)
   showNode(B, left);
   showNode(B, right);
 #endif
+
+  check(left != NONODE, "shift: left is NONODE");
+  check(right != NONODE, "shift: right is NONODE");
+  check(anchor != NONODE, "shift: anchor is NONODE");
 
   i = isinternal(left);
   if (numentries(left) < numentries(right)) {	/* shift entries to left */
@@ -951,7 +966,7 @@ Nptr shift(Tree *B, Nptr left, Nptr right, Nptr anchor)
 \*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /*~~~~~~~~~~~~~~~~~~~~   Set up pool of free nodes   ~~~~~~~~~~~~~~~~~~*/
-void initFreeNodePool(Tree *B, int quantity)
+int initFreeNodePool(Tree *B, int quantity)
 {
   int	i;
   Nptr	n;
@@ -961,6 +976,8 @@ void initFreeNodePool(Tree *B, int quantity)
 
   setpoolsize(quantity);
   setnodearray(malloc(quantity * sizeof(Node)));	/* node memory block */
+  check_mem(B->tree);
+
   setfirstfreenode(nodearrayhead);	/* start a list of free nodes */
   for (n = getfirstfreenode, i = 0; i < quantity; n++, i++) {
     clearflags(n);
@@ -969,10 +986,10 @@ void initFreeNodePool(Tree *B, int quantity)
   }
   setnextnode(--n, NONODE);		/* indicates end of free node list */
 
-  return;
+  return 0;
  error:
   fprintf(stderr, "initFreeNodePool failed\n");
-  return;
+  return 1;
 }
 
 
@@ -982,6 +999,7 @@ Nptr getFreeNode(Tree *B)
   Nptr newNode = getfirstfreenode;
 
   check(B, "getFreeNode received Btree null pointer");
+  check(newNode, "getFreeNode got null pointer from getfirstfreenode");
 
   if (newNode != NONODE) {
     setfirstfreenode(getnextnode(newNode));	/* adjust free node list */
@@ -989,7 +1007,7 @@ Nptr getFreeNode(Tree *B)
   }
   else {
     fprintf(stderr, "Out of tree nodes.");	/* can't recover from this */
-    exit(0);
+    goto error;
   }
 
   return newNode;
@@ -999,7 +1017,7 @@ Nptr getFreeNode(Tree *B)
 
 
 /*~~~~~~~~~~~~   return a deleted B+tree node to the pool   ~~~~~~~~~~~*/
-void putFreeNode(Tree *B, Nptr self)
+int putFreeNode(Tree *B, Nptr self)
 {
   check(B, "putFreeNode received Btree null pointer");
   check(self, "putFreeNode received self null pointer");
@@ -1008,10 +1026,10 @@ void putFreeNode(Tree *B, Nptr self)
   clearentries(self);
   setnextnode(self, getfirstfreenode);		/* add node to list */
   setfirstfreenode(self);			/* set it to be list head */
-  return;
+  return 0;
  error:
   fprintf(stderr, "putFreeNode failed\n");
-  return;
+  return 1;
 }
 
 
@@ -1024,7 +1042,8 @@ Nptr getDataNode(Tree *B, keyT key)		/* can add data parameter */
   check(B, "getDataNode received Btree null pointer");
 
   newNode = getFreeNode(B);
-  check (newNode, "getDataNode received null pointer from getFreeNode");
+  check(newNode, "getDataNode received null pointer from getFreeNode");
+  check(newNode != NONODE, "getDataNode received NONODE from getFreeNode");
 
   value = (keyT *) &nAdr(newNode).d;
   *value = key;					/* can add code to fill node */
